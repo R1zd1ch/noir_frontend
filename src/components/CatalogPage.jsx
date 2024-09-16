@@ -34,10 +34,13 @@ const CatalogPage = () => {
     );
   }
 
+  // Проверяем, что jewelryItems - массив
+  const jewelryList = Array.isArray(jewelryItems) ? jewelryItems : [];
+
   return (
     <Box sx={{ minHeight: '600px' }}>
       <Grid container spacing={4} sx={{ padding: 4 }}>
-        {jewelryItems.map((jewelry) => (
+        {jewelryList.map((jewelry) => (
           <Grid item key={jewelry.id} xs={12} sm={6} md={4}>
             <Card>
               {jewelry.images.length > 0 && (
