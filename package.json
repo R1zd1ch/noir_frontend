@@ -2,7 +2,7 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
-  "proxy": "https://167b-188-227-8-204.ngrok-free.app",
+  "proxy": "https://ca76-188-227-8-204.ngrok-free.app",
   "dependencies": {
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",

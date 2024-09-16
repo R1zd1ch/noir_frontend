@@ -1,4 +1,3 @@
-/* eslint-disable */
 import React from 'react';
 import { AppBar, Toolbar, Typography, IconButton, Badge, Box, Button } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
