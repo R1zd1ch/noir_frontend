@@ -1,12 +1,10 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { useWebApp, MainButton } from '@vkruglikov/react-telegram-web-app';
 import Root from './Root';
 import MainPage from './MainPage';
 import CatalogPage from './CatalogPage';
+import MainButtonToCart from './MainButtonToCart';
 
 const App = () => {
-  const tg = useWebApp();
-
   return (
     <BrowserRouter>
       <Routes>
@@ -17,10 +15,7 @@ const App = () => {
           <Route path="*"></Route>
         </Route>
       </Routes>
-      <MainButton
-        text="TO CART"
-        onClick={() => <Route path="/catalog" element={<CatalogPage />}></Route>}
-      />
+      <MainButtonToCart></MainButtonToCart>
     </BrowserRouter>
   );
 };
