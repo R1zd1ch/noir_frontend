@@ -14,11 +14,17 @@ const NavBar = () => {
 
   const handleHomeClick = () => {
     navigate('/main');
+    window.scrollTo(0, 0);
   };
 
   const handleCartClick = () => {
     navigate('/cart');
+    window.scrollTo(0, 0);
     MainButton.show(); // Показываем основную кнопку через useWebApp
+  };
+  const handleCatalogClick = () => {
+    navigate('/catalog');
+    window.scrollTo(0, 0);
   };
 
   return (
@@ -28,7 +34,7 @@ const NavBar = () => {
         sx={{
           backgroundColor: theme.palette.backgroundAppBar.default, // Используем цвет фона из темы
           color: theme.palette.text.primary, // Цвет текста из темы
-          boxShadow: '0 -2px 5px rgba(0, 0, 0, 0.5)',
+          boxShadow: 50,
         }}
       >
         <Toolbar sx={{ height: '75px', display: 'flex', alignItems: 'center' }}>
@@ -50,18 +56,16 @@ const NavBar = () => {
               marginLeft: '15px',
             }}
           >
-            <Button size="large" color="inherit" onClick={() => navigate('/catalog')}>
+            <Button size="large" color="inherit" onClick={handleCatalogClick}>
               Catalog
             </Button>
             <Box sx={{ display: 'flex' }}>
               <Button size="large" color="inherit" onClick={handleCartClick}>
                 Cart
-              </Button>
-              <IconButton edge="end" onClick={handleCartClick}>
                 <Badge color="secondary">
-                  <ShoppingCartIcon sx={{ color: 'white' }} />
+                  <ShoppingCartIcon sx={{ color: 'white', marginLeft: '10px' }} />
                 </Badge>
-              </IconButton>
+              </Button>
             </Box>
           </Box>
         </Toolbar>
