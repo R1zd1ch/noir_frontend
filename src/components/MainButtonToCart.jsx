@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 const MainButtonToCart = () => {
   const navigate = useNavigate();
 
-  return <MainButton text="TO CART" onClick={() => navigate('/catalog')} />;
+  return <MainButton text="TO CART" onClick={() => navigate('/сart')} />;
 };
 
 export default MainButtonToCart;
