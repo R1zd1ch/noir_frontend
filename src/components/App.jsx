@@ -21,7 +21,6 @@ const App = () => {
         text="TO CART"
         onClick={() => <Route path="/catalog" element={<CatalogPage />}></Route>}
       />
-      ;
     </BrowserRouter>
   );
 };
