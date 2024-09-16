@@ -3,7 +3,7 @@ import axios from 'axios';
 
 // Асинхронное действие для получения всех не проданных украшений
 export const fetchJewelryItems = createAsyncThunk('jewelry/fetchJewelryItems', async () => {
-  const response = await axios.get('/api/jewelry');
+  const response = await axios.get('https://ca76-188-227-8-204.ngrok-free.app/api/jewelry');
   return response.data;
 });
 
