@@ -8,7 +8,7 @@ const CartPage = () => {
   // Проверяем, доступна ли информация о пользователе
   const userId =
     tg.initDataUnsafe && tg.initDataUnsafe.user
-      ? tg.initDataUnsafe.user.id
+      ? tg.initDataUnsafe.user.first_name
       : 'User ID not available';
 
   return (
