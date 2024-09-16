@@ -13,7 +13,7 @@ const Footer = () => {
         bottom: 0,
         height: '100px',
         width: '100%',
-        backgroundColor: theme.palette.background.default, // Цвет фона из темы
+        backgroundColor: theme.palette.backgroundAppBar.default, // Цвет фона из темы
         color: theme.palette.text.primary, // Цвет текста из темы
         boxShadow: '0 -2px 5px rgba(0, 0, 0, 0.5)',
         padding: '10px 0',
