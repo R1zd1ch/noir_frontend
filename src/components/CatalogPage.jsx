@@ -13,12 +13,16 @@ const CatalogPage = () => {
   const itemsPerPage = 4; // Количество украшений на странице
 
   // Вычисляем общее количество страниц
-  const totalPages = Math.ceil(jewelryItems.length / itemsPerPage);
+  const totalPages = Array.isArray(jewelryItems)
+    ? Math.ceil(jewelryItems.length / itemsPerPage)
+    : 0;
 
   // Вычисляем украшения для текущей страницы
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentJewelryItems = jewelryItems.slice(indexOfFirstItem, indexOfLastItem);
+  const currentJewelryItems = Array.isArray(jewelryItems)
+    ? jewelryItems.slice(indexOfFirstItem, indexOfLastItem)
+    : [];
 
   // Загружаем товары при монтировании компонента
   useEffect(() => {
@@ -49,7 +53,7 @@ const CatalogPage = () => {
     );
   }
 
-  if (jewelryItems.length === 0) {
+  if (currentJewelryItems.length === 0 && status !== 'loading') {
     return (
       <Box
         sx={{ minHeight: '600px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
