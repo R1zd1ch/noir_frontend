@@ -26,8 +26,8 @@ const NavBar = () => {
   };
   const handleCatalogClick = () => {
     navigate('/catalog');
-    dispatch(resetStatus());
-    dispatch(fetchJewelryItems());
+    // dispatch(resetStatus());
+    // dispatch(fetchJewelryItems());
     window.scrollTo(0, 0);
   };
 
