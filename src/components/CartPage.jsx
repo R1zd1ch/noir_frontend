@@ -6,17 +6,17 @@ const CartPage = () => {
   const tg = useWebApp();
 
   // Проверяем, доступна ли информация о пользователе
-  const userId =
+  const userName =
     tg.initDataUnsafe && tg.initDataUnsafe.user
       ? tg.initDataUnsafe.user.first_name
-      : 'User ID not available';
+      : 'User Name not available';
 
   return (
     <Container maxWidth="sm" style={{ padding: '20px', textAlign: 'center', minHeight: '600px' }}>
       <Typography variant="h4" component="h1" gutterBottom>
         Your Cart
       </Typography>
-      <Typography variant="body1">User ID: {userId}</Typography>
+      <Typography variant="body1">User name: {userName}</Typography>
     </Container>
   );
 };

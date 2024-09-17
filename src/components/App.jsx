@@ -4,13 +4,14 @@ import MainPage from './MainPage';
 import CatalogPage from './CatalogPage';
 import MainButtonToCart from './MainButtonToCart';
 import CartPage from './CartPage';
+import WelcomePage from './WelcomePage';
 
 const App = () => {
   return (
     <BrowserRouter>
       <Routes>
         <Route element={<Root />}>
-          <Route index></Route>
+          <Route index element={<WelcomePage />}></Route>
           <Route path="/main" element={<MainPage />}></Route>
           <Route path="/catalog" element={<CatalogPage />}></Route>
           <Route path="/cart" element={<CartPage />}></Route>

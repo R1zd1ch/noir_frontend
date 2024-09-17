@@ -5,8 +5,11 @@ import { useNavigate } from 'react-router-dom';
 import { useWebApp } from '@vkruglikov/react-telegram-web-app'; // Импортируем useWebApp
 import logoImg from '../assets/icon.jpg';
 import { useTheme } from '@mui/material/styles'; // Импортируем useTheme для доступа к теме
+import { resetStatus, fetchJewelryItems } from '../slices/JewelrySlice';
+import { useDispatch } from 'react-redux';
 
 const NavBar = () => {
+  const dispatch = useDispatch();
   const theme = useTheme(); // Получаем доступ к теме
   const { MainButton } = useWebApp();
   const navigate = useNavigate();
@@ -23,6 +26,8 @@ const NavBar = () => {
   };
   const handleCatalogClick = () => {
     navigate('/catalog');
+    dispatch(resetStatus());
+    dispatch(fetchJewelryItems());
     window.scrollTo(0, 0);
   };
 

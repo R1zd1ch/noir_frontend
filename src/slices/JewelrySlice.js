@@ -3,7 +3,7 @@ import axios from 'axios';
 
 // Асинхронное действие для получения всех не проданных украшений
 export const fetchJewelryItems = createAsyncThunk('jewelry/fetchJewelryItems', async () => {
-  const response = await axios.get('https://ca76-188-227-8-204.ngrok-free.app/api/jewelry');
+  const response = await axios.get('https://865e-188-227-8-204.ngrok-free.app/api/jewelry');
   return response.data;
 });
 
@@ -15,7 +15,11 @@ const jewelrySlice = createSlice({
     status: 'idle',
     error: null,
   },
-  reducers: {},
+  reducers: {
+    resetStatus: (state) => {
+      state.status = 'idle'; // сбрасывает статус к 'idle'
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchJewelryItems.pending, (state) => {
@@ -32,4 +36,5 @@ const jewelrySlice = createSlice({
   },
 });
 
+export const { resetStatus } = jewelrySlice.actions;
 export default jewelrySlice.reducer;

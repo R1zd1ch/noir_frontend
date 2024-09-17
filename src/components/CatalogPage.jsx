@@ -1,76 +1,81 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  Grid,
-  Card,
-  CardContent,
-  CardMedia,
-  Typography,
-  CircularProgress,
-  Box,
-} from '@mui/material';
-import { fetchJewelryItems } from '../slices/JewelrySlice';
+import { Grid, CircularProgress, Typography, Box, Pagination } from '@mui/material';
+import { fetchJewelryItems, resetStatus } from '../slices/JewelrySlice';
+import JewelryCard from './JewelryCard';
 
 const CatalogPage = () => {
   const dispatch = useDispatch();
   const { items: jewelryItems, status, error } = useSelector((state) => state.jewelry);
 
+  // Пагинация
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 4; // Количество украшений на странице
+
+  // Вычисляем общее количество страниц
+  const totalPages = Math.ceil(jewelryItems.length / itemsPerPage);
+
+  // Вычисляем украшения для текущей страницы
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentJewelryItems = jewelryItems.slice(indexOfFirstItem, indexOfLastItem);
+
   // Загружаем товары при монтировании компонента
   useEffect(() => {
-    if (status === 'idle') {
-      dispatch(fetchJewelryItems());
-    }
-  }, [status, dispatch]);
+    dispatch(resetStatus());
+    dispatch(fetchJewelryItems());
+  }, [dispatch]);
 
   if (status === 'loading') {
-    return <CircularProgress />;
+    return (
+      <Box
+        sx={{
+          minHeight: '600px',
+          display: 'flex', // Используем Flexbox для центрирования
+          justifyContent: 'center', // Выравнивание по горизонтали
+          alignItems: 'center', // Выравнивание по вертикали
+        }}
+      >
+        <CircularProgress size={80} /> {/* Увеличиваем размер до 80px */}
+      </Box>
+    );
   }
 
   if (error) {
     return (
-      <Typography sx={{ minHeight: '600px' }} color="error">
-        Ошибка: {error}
-      </Typography>
+      <Box sx={{ minHeight: '600px' }}>
+        <Typography color="error">Ошибка: {error}</Typography>
+      </Box>
     );
   }
 
-  // Проверяем, что jewelryItems - массив
-  const jewelryList = Array.isArray(jewelryItems) ? jewelryItems : [];
+  // Обработчик смены страницы
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
+    window.scrollTo(0, 0);
+  };
 
   return (
-    <Box sx={{ minHeight: '600px' }}>
-      <Grid container spacing={4} sx={{ padding: 4 }}>
-        {jewelryList.map((jewelry) => (
-          <Grid item key={jewelry.id} xs={12} sm={6} md={4}>
-            <Card>
-              {jewelry.images.length > 0 && (
-                <CardMedia
-                  component="img"
-                  height="200"
-                  image={jewelry.images[0].url} // Используем первое изображение украшения
-                  alt={jewelry.title}
-                />
-              )}
-              <CardContent>
-                <Typography variant="h5" component="div">
-                  {jewelry.title}
-                </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  {jewelry.description}
-                </Typography>
-                <Typography variant="h6" color="primary">
-                  ${jewelry.price.toFixed(2)}
-                </Typography>
-                {jewelry.sold && (
-                  <Typography variant="body2" color="error">
-                    Продано
-                  </Typography>
-                )}
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
+    <Box sx={{ minHeight: '808px', padding: 2 }}>
+      <Box sx={{ minHeight: '808px' }}>
+        <Grid container spacing={1}>
+          {currentJewelryItems.map((jewelry) => (
+            <Grid item key={jewelry.id} xs={6} sm={3} md={3} lg={3}>
+              <JewelryCard jewelry={jewelry} />
+            </Grid>
+          ))}
+        </Grid>
+      </Box>
+
+      {/* Пагинация */}
+      <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
+        <Pagination
+          count={totalPages} // Общее количество страниц
+          page={currentPage} // Текущая страница
+          onChange={handlePageChange} // Обработчик смены страницы
+          color="primary" // Цвет пагинации (использует primary цвет темы)
+        />
+      </Box>
     </Box>
   );
 };
