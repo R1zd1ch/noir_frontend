@@ -55,12 +55,22 @@ const CatalogPage = () => {
 
   if (currentJewelryItems.length === 0 && status !== 'loading') {
     return (
-      <Box
-        sx={{ minHeight: '600px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
-      >
-        <Typography color="textSecondary" variant="h6">
-          Нет доступных украшений для отображения
-        </Typography>
+      <Box sx={{ minHeight: '550px', marginTop: '50px' }}>
+        <Box
+          sx={{
+            minHeight: '',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            textAlign: 'center',
+            padding: 2,
+          }}
+        >
+          <Typography color="white" variant="h6">
+            Нет доступных украшений для отображения
+          </Typography>
+        </Box>
       </Box>
     );
   }
