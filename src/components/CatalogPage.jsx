@@ -49,6 +49,18 @@ const CatalogPage = () => {
     );
   }
 
+  if (jewelryItems.length === 0) {
+    return (
+      <Box
+        sx={{ minHeight: '600px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+      >
+        <Typography color="textSecondary" variant="h6">
+          Нет доступных украшений для отображения
+        </Typography>
+      </Box>
+    );
+  }
+
   // Обработчик смены страницы
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
