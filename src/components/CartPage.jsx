@@ -119,7 +119,7 @@ const CartPage = () => {
         alignItems: 'center',
       }}
     >
-      <Typography color="white">Ошибка: {errorMessage}</Typography>
+      <Typography color="white">Ошибка: {error}</Typography>
       <Typography color="white">Чтобы сообщить об ошибке и поныть</Typography>
       <Typography color="white" align="center">
         Нажмите на&nbsp;
@@ -134,14 +134,6 @@ const CartPage = () => {
           Пожаловаться
         </Button>
       </Typography>
-      <Button
-        variant="contained"
-        color="secondary"
-        sx={{ marginTop: 2 }}
-        onClick={() => dispatch(fetchJewelryItems())}
-      >
-        Повторить загрузку
-      </Button>
     </Box>
   );
 
