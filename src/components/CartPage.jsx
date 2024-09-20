@@ -112,18 +112,35 @@ const CartPage = () => {
 
   const renderErrorMessage = (errorMessage) => (
     <Box
-      sx={{ minHeight: '600px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+      sx={{
+        minHeight: '600px',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+      }}
     >
       <Typography color="white">Ошибка: {errorMessage}</Typography>
+      <Typography color="white">Чтобы сообщить об ошибке и поныть</Typography>
+      <Typography color="white" align="center">
+        Нажмите на&nbsp;
+        <Button
+          variant="contained"
+          color="primary"
+          href="https://t.me/r1zzd"
+          target="_blank"
+          rel="noopener noreferrer"
+          sx={{ marginLeft: 1 }}
+        >
+          Пожаловаться
+        </Button>
+      </Typography>
       <Button
         variant="contained"
-        color="primary"
-        href="https://t.me/r1zzd"
-        target="_blank"
-        rel="noopener noreferrer"
-        sx={{ marginLeft: 1 }}
+        color="secondary"
+        sx={{ marginTop: 2 }}
+        onClick={() => dispatch(fetchJewelryItems())}
       >
-        Пожаловаться
+        Повторить загрузку
       </Button>
     </Box>
   );
