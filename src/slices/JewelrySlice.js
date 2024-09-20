@@ -3,7 +3,7 @@ import axios from 'axios';
 
 // Асинхронное действие для получения всех не проданных украшений
 export const fetchJewelryItems = createAsyncThunk('jewelry/fetchJewelryItems', async () => {
-  const response = await axios.get('https://865e-188-227-8-204.ngrok-free.app/api/jewelry');
+  const response = await axios.get('/api/jewelry');
   return response.data;
 });
 
@@ -18,6 +18,7 @@ const jewelrySlice = createSlice({
   reducers: {
     resetStatus: (state) => {
       state.status = 'idle'; // сбрасывает статус к 'idle'
+      state.error = null;
     },
   },
   extraReducers: (builder) => {
@@ -28,6 +29,7 @@ const jewelrySlice = createSlice({
       .addCase(fetchJewelryItems.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.items = action.payload; // Сохраняем товары в состояние
+        console.log(state.items);
       })
       .addCase(fetchJewelryItems.rejected, (state, action) => {
         state.status = 'failed';

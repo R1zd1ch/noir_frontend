@@ -6,6 +6,7 @@ import { useWebApp } from '@vkruglikov/react-telegram-web-app'; // Импорт�
 import logoImg from '../assets/icon.jpg';
 import { useTheme } from '@mui/material/styles'; // Импортируем useTheme для доступа к теме
 import { resetStatus, fetchJewelryItems } from '../slices/JewelrySlice';
+import { fetchCartItems, resetCartState } from '../slices/cartSlice';
 import { useDispatch } from 'react-redux';
 
 const NavBar = () => {
@@ -13,6 +14,8 @@ const NavBar = () => {
   const theme = useTheme(); // Получаем доступ к теме
   const { MainButton } = useWebApp();
   const navigate = useNavigate();
+  const tg = useWebApp();
+  const userId = tg.initDataUnsafe?.user?.id || '6933164806';
 
   const handleHomeClick = () => {
     navigate('/main');
@@ -21,6 +24,10 @@ const NavBar = () => {
 
   const handleCartClick = () => {
     navigate('/cart');
+    dispatch(resetCartState());
+    dispatch(fetchCartItems(userId)).then(() => {
+      setTimeout(() => {}, 500);
+    });
     window.scrollTo(0, 0);
     MainButton.show(); // Показываем основную кнопку через useWebApp
   };

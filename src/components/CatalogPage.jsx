@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Grid, CircularProgress, Typography, Box, Pagination } from '@mui/material';
+import { Grid, CircularProgress, Typography, Box, Pagination, Button } from '@mui/material';
 import { fetchJewelryItems, resetStatus } from '../slices/JewelrySlice';
 import JewelryCard from './JewelryCard';
 
@@ -8,47 +8,82 @@ const CatalogPage = () => {
   const dispatch = useDispatch();
   const { items: jewelryItems, status, error } = useSelector((state) => state.jewelry);
 
-  // Пагинация
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 4; // Количество украшений на странице
+  const itemsPerPage = 4; // Количество товаров на странице
 
-  // Вычисляем общее количество страниц
+  // Пагинация
   const totalPages = Array.isArray(jewelryItems)
     ? Math.ceil(jewelryItems.length / itemsPerPage)
     : 0;
 
-  // Вычисляем украшения для текущей страницы
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentJewelryItems = Array.isArray(jewelryItems)
     ? jewelryItems.slice(indexOfFirstItem, indexOfLastItem)
     : [];
 
-  // Загружаем товары при монтировании компонента
+  // Эффект для загрузки данных
   useEffect(() => {
+    // Сбрасываем статус перед новой загрузкой данных
     dispatch(resetStatus());
     dispatch(fetchJewelryItems());
   }, [dispatch]);
+
+  // Эффект для сброса ошибки при повторной попытке
+  useEffect(() => {
+    if (status === 'succeeded') {
+      dispatch(resetStatus()); // Сбрасываем ошибку после успешной загрузки данных
+    }
+  }, [status, dispatch]);
 
   if (status === 'loading') {
     return (
       <Box
         sx={{
           minHeight: '600px',
-          display: 'flex', // Используем Flexbox для центрирования
-          justifyContent: 'center', // Выравнивание по горизонтали
-          alignItems: 'center', // Выравнивание по вертикали
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
         }}
       >
-        <CircularProgress size={80} /> {/* Увеличиваем размер до 80px */}
+        <CircularProgress size={80} />
       </Box>
     );
   }
 
-  if (error) {
+  if (error && status !== 'succeeded') {
     return (
-      <Box sx={{ minHeight: '600px' }}>
-        <Typography color="error">Ошибка: {error}</Typography>
+      <Box
+        sx={{
+          minHeight: '600px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        <Typography color="white">Ошибка: {error}</Typography>
+        <Typography color="white">Чтобы сообщить об ошибке и поныть</Typography>
+        <Typography color="white" align="center">
+          Нажмите на&nbsp;
+          <Button
+            variant="contained"
+            color="primary"
+            href="https://t.me/r1zzd"
+            target="_blank"
+            rel="noopener noreferrer"
+            sx={{ marginLeft: 1 }}
+          >
+            Пожаловаться
+          </Button>
+        </Typography>
+        <Button
+          variant="contained"
+          color="secondary"
+          sx={{ marginTop: 2 }}
+          onClick={() => dispatch(fetchJewelryItems())}
+        >
+          Повторить загрузку
+        </Button>
       </Box>
     );
   }
@@ -58,7 +93,6 @@ const CatalogPage = () => {
       <Box sx={{ minHeight: '550px', marginTop: '50px' }}>
         <Box
           sx={{
-            minHeight: '',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
@@ -75,7 +109,6 @@ const CatalogPage = () => {
     );
   }
 
-  // Обработчик смены страницы
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
     window.scrollTo(0, 0);
@@ -84,6 +117,9 @@ const CatalogPage = () => {
   return (
     <Box sx={{ minHeight: '808px', padding: 2 }}>
       <Box sx={{ minHeight: '808px' }}>
+        <Typography color="white" variant="h2" align="center" paddingBottom={2}>
+          Наши украшения:
+        </Typography>
         <Grid container spacing={1}>
           {currentJewelryItems.map((jewelry) => (
             <Grid item key={jewelry.id} xs={6} sm={3} md={3} lg={3}>
@@ -92,14 +128,12 @@ const CatalogPage = () => {
           ))}
         </Grid>
       </Box>
-
-      {/* Пагинация */}
       <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
         <Pagination
-          count={totalPages} // Общее количество страниц
-          page={currentPage} // Текущая страница
-          onChange={handlePageChange} // Обработчик смены страницы
-          color="primary" // Цвет пагинации (использует primary цвет темы)
+          count={totalPages}
+          page={currentPage}
+          onChange={handlePageChange}
+          color="primary"
         />
       </Box>
     </Box>

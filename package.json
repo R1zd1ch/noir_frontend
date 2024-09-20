@@ -2,6 +2,7 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:5000",
   "dependencies": {
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
@@ -9,6 +10,7 @@
     "@mui/icons-material": "^6.1.0",
     "@mui/material": "^6.1.0",
     "@mui/styles": "^6.1.0",
+    "@mui/system": "^6.1.1",
     "@reduxjs/toolkit": "^1.8.5",
     "@rollbar/react": "^0.11.2",
     "@vkruglikov/react-telegram-web-app": "^2.1.9",
@@ -25,6 +27,7 @@
     "react-router-dom": "^6.3.0",
     "react-scripts": "^5.0.1",
     "react-scroll-to-bottom": "^4.2.0",
+    "react-transition-group": "^4.4.5",
     "sass": "^1.63.6",
     "socket.io-client": "^4.5.2",
     "web-vitals": "^3.3.2",
