@@ -1,158 +1,133 @@
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
-import { Typography, Grid, Box, CircularProgress, Pagination } from '@mui/material';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchCartItems, removeFromCart } from '../slices/cartSlice';
-import CartJewelry from './CartJewelry';
-import { CSSTransition, TransitionGroup } from 'react-transition-group';
-import { keyframes } from '@mui/system';
-import PaymentButton from './PaymentButton'; // Импортируем компонент для оплаты через MainButton
+import { Grid, CircularProgress, Typography, Box, Pagination, Button } from '@mui/material';
+import { fetchJewelryItems, resetStatus } from '../slices/JewelrySlice';
+import JewelryCard from './JewelryCard';
 
-const fadeIn = keyframes`
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-`;
-
-const fadeOut = keyframes`
-  from {
-    opacity: 1;
-    transform: scale(1);
-  }
-  to {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-`;
-
-const CartPage = () => {
+const CatalogPage = () => {
   const dispatch = useDispatch();
-  const {
-    items: cartItems = [],
-    cartStatus,
-    fetchStatus,
-    fetchError,
-    cartError,
-  } = useSelector((state) => state.cart || {});
+  const { items: jewelryItems, status, error } = useSelector((state) => state.jewelry);
 
-  const [isRemoving, setIsRemoving] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 4;
-  const [localCartItems, setLocalCartItems] = useState(cartItems || []);
+  const itemsPerPage = 4; // Количество товаров на странице
 
-  useEffect(() => {
-    if (cartItems.length === 0) {
-      dispatch(fetchCartItems())
-        .unwrap()
-        .then((response) => {
-          setLocalCartItems(response || []);
-        })
-        .catch((error) => {
-          console.error('Ошибка загрузки корзины: ', error);
-          setLocalCartItems([]);
-        });
-    }
-  }, [dispatch, cartItems.length]);
+  // Пагинация
+  const totalPages = Array.isArray(jewelryItems)
+    ? Math.ceil(jewelryItems.length / itemsPerPage)
+    : 0;
 
-  const handleRemove = useCallback(
-    (jewelryId) => {
-      setIsRemoving(true);
-
-      const updatedItems = localCartItems.map((item) =>
-        item.jewelryId === jewelryId ? { ...item, isRemoving: true } : item,
-      );
-      setLocalCartItems(updatedItems);
-
-      setTimeout(() => {
-        setLocalCartItems((prevItems) => prevItems.filter((item) => item.jewelryId !== jewelryId));
-
-        dispatch(removeFromCart({ jewelryId })).finally(() => {
-          setIsRemoving(false);
-        });
-      }, 500);
-    },
-    [localCartItems, dispatch],
-  );
-
-  const totalPages = Math.ceil((localCartItems?.length || 0) / itemsPerPage);
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentJewelryItems = Array.isArray(jewelryItems)
+    ? jewelryItems.slice(indexOfFirstItem, indexOfLastItem)
+    : [];
 
-  const currentCartItems = useMemo(() => {
-    return localCartItems?.slice(indexOfFirstItem, indexOfLastItem) || [];
-  }, [localCartItems, indexOfFirstItem, indexOfLastItem]);
+  // Эффект для загрузки данных
+  useEffect(() => {
+    // Сбрасываем статус перед новой загрузкой данных
+    dispatch(resetStatus());
+    dispatch(fetchJewelryItems());
+  }, [dispatch]);
 
-  const handlePageChange = useCallback((event, value) => {
-    setCurrentPage(value);
-    window.scrollTo(0, 0);
-  }, []);
+  // Эффект для сброса ошибки при повторной попытке
+  useEffect(() => {
+    if (status === 'succeeded') {
+      dispatch(resetStatus()); // Сбрасываем ошибку после успешной загрузки данных
+    }
+  }, [status, dispatch]);
 
-  const isLoading = fetchStatus === 'loading' || cartStatus === 'loading' || isRemoving;
-
-  if (isLoading) {
+  if (status === 'loading') {
     return (
       <Box
-        sx={{ minHeight: '600px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+        sx={{
+          minHeight: '600px',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
       >
         <CircularProgress size={80} />
       </Box>
     );
   }
 
-  if (fetchError || cartError) {
+  if (error && status !== 'succeeded') {
     return (
       <Box
-        sx={{ minHeight: '600px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+        sx={{
+          minHeight: '600px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
       >
-        <Typography color="white">Ошибка: {fetchError || cartError}</Typography>
+        <Typography color="white">Ошибка: {error}</Typography>
+        <Typography color="white">Чтобы сообщить об ошибке и поныть</Typography>
+        <Typography color="white" align="center">
+          Нажмите на&nbsp;
+          <Button
+            variant="contained"
+            color="primary"
+            href="https://t.me/r1zzd"
+            target="_blank"
+            rel="noopener noreferrer"
+            sx={{ marginLeft: 1 }}
+          >
+            Пожаловаться
+          </Button>
+        </Typography>
+        <Button
+          variant="contained"
+          color="secondary"
+          sx={{ marginTop: 2 }}
+          onClick={() => dispatch(fetchJewelryItems())}
+        >
+          Повторить загрузку
+        </Button>
       </Box>
     );
   }
 
-  if (!currentCartItems.length) {
+  if (currentJewelryItems.length === 0 && status !== 'loading') {
     return (
-      <Box sx={{ minHeight: '606px' }}>
-        <Typography align="center" variant="h6" sx={{ marginTop: 4 }}>
-          Ваша корзина пуста
-        </Typography>
+      <Box sx={{ minHeight: '550px', marginTop: '50px' }}>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            textAlign: 'center',
+            padding: 2,
+          }}
+        >
+          <Typography color="white" variant="h6">
+            Нет доступных украшений для отображения
+          </Typography>
+        </Box>
       </Box>
     );
   }
+
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
+    window.scrollTo(0, 0);
+  };
 
   return (
     <Box sx={{ minHeight: '808px', padding: 2 }}>
-      <Typography variant="h4" align="center" gutterBottom>
-        Ваша Корзина
-      </Typography>
-      <TransitionGroup component={Grid} container spacing={1}>
-        {currentCartItems.map((item) => (
-          <CSSTransition
-            key={item.jewelryId}
-            timeout={500}
-            classNames={{
-              enter: 'fade-enter',
-              enterActive: 'fade-enter-active',
-              exit: 'fade-exit',
-              exitActive: 'fade-exit-active',
-            }}
-            onEnter={(node) => {
-              node.style.animation = `${fadeIn} 500ms forwards`;
-            }}
-            onExit={(node) => {
-              node.style.animation = `${fadeOut} 500ms forwards`;
-            }}
-          >
-            <Grid item xs={6} sm={3} md={3} lg={3}>
-              {item.jewelry && <CartJewelry item={item} onRemove={handleRemove} />}
+      <Box sx={{ minHeight: '808px' }}>
+        <Typography color="white" variant="h2" align="center" paddingBottom={2}>
+          Наши украшения:
+        </Typography>
+        <Grid container spacing={1}>
+          {currentJewelryItems.map((jewelry) => (
+            <Grid item key={jewelry.id} xs={6} sm={3} md={3} lg={3}>
+              <JewelryCard jewelry={jewelry} />
             </Grid>
-          </CSSTransition>
-        ))}
-      </TransitionGroup>
-
+          ))}
+        </Grid>
+      </Box>
       <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
         <Pagination
           count={totalPages}
@@ -161,11 +136,8 @@ const CartPage = () => {
           color="primary"
         />
       </Box>
-
-      {/* Компонент, который активирует MainButton для оплаты */}
-      <PaymentButton />
     </Box>
   );
 };
 
-export default CartPage;
+export default CatalogPage;
