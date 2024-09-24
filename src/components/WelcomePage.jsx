@@ -12,7 +12,7 @@ const WelcomePage = () => {
   const { loading, error, user } = useSelector((state) => state.user);
 
   // Извлекаем данные пользователя из tg.initDataUnsafe
-  const telegramId = tg.initDataUnsafe?.user?.id.ToString() || '6933164806';
+  const telegramId = tg.initDataUnsafe?.user?.id.toString() || '6933164806';
   const username = tg.initDataUnsafe?.user?.username || 'r1zzd';
   const firstName = tg.initDataUnsafe?.user?.first_name || 'r1zzd';
   const lastName = tg.initDataUnsafe?.user?.last_name || '';
