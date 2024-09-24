@@ -13,7 +13,7 @@ const WelcomePage = () => {
 
   // Извлекаем данные пользователя из tg.initDataUnsafe
   const telegramIdNotToString = tg.initDataUnsafe?.user?.id;
-  const telegramId = telegramIdNotToString.telegramIdNot.ToString() || '6933164806';
+  const telegramId = telegramIdNotToString.ToString() || '6933164806';
   const username = tg.initDataUnsafe?.user?.username || 'r1zzd';
   const firstName = tg.initDataUnsafe?.user?.first_name || 'r1zzd';
   const lastName = tg.initDataUnsafe?.user?.last_name || '';
