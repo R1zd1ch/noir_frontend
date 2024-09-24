@@ -8,11 +8,11 @@ export const fetchUser = createAsyncThunk(
   'user/fetchUser',
   async (userData, { rejectWithValue }) => {
     try {
-      // Отправляем данные пользователя
-      const response = await axios.post(`${apiUrl}/api/user/${userData.telegramId}`, userData); // Используем POST для передачи данных
+      // Используем POST для передачи данных
+      const response = await axios.post(`${apiUrl}/api/user/${userData.telegramId}`, userData);
       return response.data.user;
     } catch (error) {
-      return rejectWithValue(error.response.data || 'Error fetching user data');
+      return rejectWithValue(error.response?.data || 'Error fetching user data');
     }
   },
 );

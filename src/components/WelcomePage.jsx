@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Box, Typography, Button, CircularProgress } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { useWebApp } from '@vkruglikov/react-telegram-web-app';
@@ -19,22 +19,25 @@ const WelcomePage = () => {
   const languageCode = tg.initDataUnsafe?.user?.language_code || 'ru';
   const isBot = tg.initDataUnsafe?.user?.is_bot || false;
 
-  // Данные для отправки
-  const userData = {
-    telegramId,
-    username,
-    firstName,
-    lastName,
-    languageCode,
-    isBot,
-  };
+  // Memoize userData to avoid unnecessary re-renders
+  const userData = useMemo(
+    () => ({
+      telegramId,
+      username,
+      firstName,
+      lastName,
+      languageCode,
+      isBot,
+    }),
+    [telegramId, username, firstName, lastName, languageCode, isBot],
+  );
 
   // Отправляем данные пользователя при монтировании компонента
   useEffect(() => {
     if (telegramId) {
       dispatch(fetchUser(userData)); // Передаем данные пользователя
     }
-  }, [dispatch, telegramId]);
+  }, [dispatch, telegramId, userData]);
 
   if (loading) {
     return (
@@ -51,7 +54,15 @@ const WelcomePage = () => {
     );
   }
 
-  if (error) return <p>Error: {error}</p>;
+  if (error) {
+    const { message, statusCode } = error;
+    return (
+      <Box sx={{ color: 'red' }}>
+        <p>Error: {message || 'An unknown error occurred'}</p>
+        {statusCode && <p>Status Code: {statusCode}</p>}
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ minHeight: '100vh', marginTop: '20px' }}>
