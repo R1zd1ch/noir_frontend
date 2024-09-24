@@ -9,7 +9,7 @@ export const fetchUser = createAsyncThunk(
   async (userData, { rejectWithValue }) => {
     try {
       // Отправляем данные пользователя
-      const response = await axios.post(`${apiUrl}/api/user/create`, userData); // Используем POST для передачи данных
+      const response = await axios.post(`${apiUrl}/api/user/${userData.telegramId}`, userData); // Используем POST для передачи данных
       return response.data.user;
     } catch (error) {
       return rejectWithValue(error.response.data || 'Error fetching user data');

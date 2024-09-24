@@ -13,10 +13,10 @@ const WelcomePage = () => {
 
   // Извлекаем данные пользователя из tg.initDataUnsafe
   const telegramId = tg.initDataUnsafe?.user?.id.toString() || '6933164806';
-  const username = tg.initDataUnsafe?.user?.username || 'DefaultUsername';
-  const firstName = tg.initDataUnsafe?.user?.first_name || 'DefaultFirstName';
-  const lastName = tg.initDataUnsafe?.user?.last_name || 'DefaultLastName';
-  const languageCode = tg.initDataUnsafe?.user?.language_code || 'en';
+  const username = tg.initDataUnsafe?.user?.username || 'r1zzd';
+  const firstName = tg.initDataUnsafe?.user?.first_name || 'r1zzd';
+  const lastName = tg.initDataUnsafe?.user?.last_name || '';
+  const languageCode = tg.initDataUnsafe?.user?.language_code || 'ru';
   const isBot = tg.initDataUnsafe?.user?.is_bot || false;
 
   // Данные для отправки
