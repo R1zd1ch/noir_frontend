@@ -2,10 +2,10 @@ import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { Typography, Grid, Box, CircularProgress, Pagination } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchCartItems, removeFromCart } from '../slices/cartSlice';
-import { useWebApp } from '@vkruglikov/react-telegram-web-app';
-import CartJewelry from './CartJewelry';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { keyframes } from '@mui/system';
+import PaymentButton from './PaymentButton'; // Импортируем компонент оплаты
+import CartJewelry from './CartJewelry';
 
 const fadeIn = keyframes`
   from {
@@ -39,15 +39,13 @@ const CartPage = () => {
     cartError,
   } = useSelector((state) => state.cart || {});
 
-  const tg = useWebApp();
-  const userId = tg.initDataUnsafe?.user?.id.toString() || '6933164806'; // Telegram userId или тестовое значение
-
   const [isRemoving, setIsRemoving] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 4;
   const [localCartItems, setLocalCartItems] = useState(cartItems || []);
 
   useEffect(() => {
+    const userId = '6933164806'; // Telegram userId или тестовое значение
     if (userId && cartItems.length === 0) {
       dispatch(fetchCartItems(userId))
         .unwrap()
@@ -59,22 +57,7 @@ const CartPage = () => {
           setLocalCartItems([]);
         });
     }
-  }, [dispatch, userId, cartItems.length]);
-
-  // Инициализация MainButton для оплаты
-  useEffect(() => {
-    const totalAmount = cartItems.reduce((total, item) => total + item.jewelry.price, 0);
-
-    tg.MainButton.setText(`Оплатить $${totalAmount}`);
-    tg.MainButton.show();
-
-    tg.MainButton.onClick(() => handlePayment());
-
-    return () => {
-      tg.MainButton.offClick(handlePayment);
-      tg.MainButton.hide();
-    };
-  }, [cartItems, tg]);
+  }, [dispatch, cartItems.length]);
 
   const handleRemove = useCallback(
     (jewelryId) => {
@@ -88,36 +71,13 @@ const CartPage = () => {
       setTimeout(() => {
         setLocalCartItems((prevItems) => prevItems.filter((item) => item.jewelryId !== jewelryId));
 
-        dispatch(removeFromCart({ jewelryId, telegramUserId: userId })).finally(() => {
+        dispatch(removeFromCart({ jewelryId, telegramUserId: '6933164806' })).finally(() => {
           setIsRemoving(false);
         });
       }, 500);
     },
-    [localCartItems, dispatch, userId],
+    [localCartItems, dispatch],
   );
-
-  const handlePayment = () => {
-    const invoiceData = {
-      title: 'Оплата заказа',
-      description: 'Оплата за выбранные ювелирные изделия',
-      payload: 'Custom-Payload',
-      provider_token: 'TEST:12345', // Тестовый токен провайдера оплаты
-      start_parameter: 'pay',
-      currency: 'USD',
-      prices: cartItems.map((item) => ({
-        label: item.jewelry.title,
-        amount: Math.round(item.jewelry.price * 100), // Цена в копейках/центах
-      })),
-    };
-
-    tg.showInvoice(invoiceData, (status) => {
-      if (status === 'ok') {
-        console.log('Платеж успешно выполнен');
-      } else {
-        console.log('Ошибка при оплате');
-      }
-    });
-  };
 
   const totalPages = Math.ceil((localCartItems?.length || 0) / itemsPerPage);
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -144,21 +104,14 @@ const CartPage = () => {
     );
   }
 
-  const renderErrorMessage = (errorMessage) => (
-    <Box
-      sx={{
-        minHeight: '600px',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-      }}
-    >
-      <Typography color="white">Ошибка: {errorMessage}</Typography>
-    </Box>
-  );
-
   if (fetchError || cartError) {
-    return renderErrorMessage(fetchError || cartError);
+    return (
+      <Box
+        sx={{ minHeight: '600px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+      >
+        <Typography color="white">Ошибка: {fetchError || cartError}</Typography>
+      </Box>
+    );
   }
 
   if (!currentCartItems.length) {
@@ -173,35 +126,33 @@ const CartPage = () => {
 
   return (
     <Box sx={{ minHeight: '808px', padding: 2 }}>
-      <Box sx={{ minHeight: '808px' }}>
-        <Typography variant="h4" align="center" gutterBottom>
-          Ваша Корзина
-        </Typography>
-        <TransitionGroup component={Grid} container spacing={1}>
-          {currentCartItems.map((item) => (
-            <CSSTransition
-              key={item.jewelryId}
-              timeout={500}
-              classNames={{
-                enter: 'fade-enter',
-                enterActive: 'fade-enter-active',
-                exit: 'fade-exit',
-                exitActive: 'fade-exit-active',
-              }}
-              onEnter={(node) => {
-                node.style.animation = `${fadeIn} 500ms forwards`;
-              }}
-              onExit={(node) => {
-                node.style.animation = `${fadeOut} 500ms forwards`;
-              }}
-            >
-              <Grid item xs={6} sm={3} md={3} lg={3}>
-                {item.jewelry && <CartJewelry item={item} onRemove={handleRemove} />}
-              </Grid>
-            </CSSTransition>
-          ))}
-        </TransitionGroup>
-      </Box>
+      <Typography variant="h4" align="center" gutterBottom>
+        Ваша Корзина
+      </Typography>
+      <TransitionGroup component={Grid} container spacing={1}>
+        {currentCartItems.map((item) => (
+          <CSSTransition
+            key={item.jewelryId}
+            timeout={500}
+            classNames={{
+              enter: 'fade-enter',
+              enterActive: 'fade-enter-active',
+              exit: 'fade-exit',
+              exitActive: 'fade-exit-active',
+            }}
+            onEnter={(node) => {
+              node.style.animation = `${fadeIn} 500ms forwards`;
+            }}
+            onExit={(node) => {
+              node.style.animation = `${fadeOut} 500ms forwards`;
+            }}
+          >
+            <Grid item xs={6} sm={3} md={3} lg={3}>
+              {item.jewelry && <CartJewelry item={item} onRemove={handleRemove} />}
+            </Grid>
+          </CSSTransition>
+        ))}
+      </TransitionGroup>
       <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
         <Pagination
           count={totalPages}
@@ -210,6 +161,7 @@ const CartPage = () => {
           color="primary"
         />
       </Box>
+      <PaymentButton /> {/* Добавляем компонент оплаты */}
     </Box>
   );
 };

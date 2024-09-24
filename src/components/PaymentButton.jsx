@@ -1,63 +1,53 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useWebApp } from '@vkruglikov/react-telegram-web-app';
 import { useSelector } from 'react-redux';
 
 const PaymentButton = () => {
-  const webApp = useWebApp();
-
-  // Получаем товары из корзины
-  const cartItems = useSelector((state) => state.cart.items || []);
+  const tg = useWebApp();
+  const cartItems = useSelector((state) => state.cart.items); // Получаем корзину из Redux
 
   useEffect(() => {
-    const mainButton = webApp.MainButton;
+    const totalAmount = cartItems.reduce((total, item) => total + item.jewelry.price, 0);
 
+    // Обновляем текст кнопки с общей суммой
     if (cartItems.length > 0) {
-      // Устанавливаем текст и активируем кнопку, если есть товары в корзине
-      mainButton.setText('Оплатить корзину');
-      mainButton.show();
-      mainButton.enable();
+      tg.MainButton.setText(`Оплатить $${totalAmount}`);
+      tg.MainButton.show();
     } else {
-      // Прячем кнопку, если корзина пуста
-      mainButton.hide();
+      tg.MainButton.hide(); // Прячем кнопку, если корзина пуста
     }
 
-    // Обработчик нажатия на MainButton
-    mainButton.onClick(() => {
-      if (!cartItems.length) {
-        console.error('Корзина пуста. Оплата невозможна.');
-        return;
-      }
-
-      // Формируем список товаров и общую сумму
-      const prices = cartItems.map((item) => ({
-        label: item.jewelry.title,
-        amount: item.jewelry.price * 100, // Конвертируем в минимальные единицы валюты
-      }));
-
-      const totalAmount = prices.reduce((sum, priceItem) => sum + priceItem.amount, 0);
-
-      const invoice = {
-        title: 'Оплата товаров из корзины',
-        description: 'Оплата за ювелирные изделия из вашей корзины.',
-        payload: 'unique_payload',
-        provider_token: '381764678:TEST:MzA3OTEyNTg1N2Jh', // Токен платежного провайдера
+    const handlePayment = () => {
+      const invoiceData = {
+        title: 'Оплата заказа',
+        description: 'Оплата за выбранные ювелирные изделия',
+        payload: 'Custom-Payload',
+        provider_token: 'TEST:12345', // Тестовый токен провайдера
+        start_parameter: 'pay',
         currency: 'USD',
-        prices: prices,
-        total_amount: totalAmount,
+        prices: cartItems.map((item) => ({
+          label: item.jewelry.title,
+          amount: Math.round(item.jewelry.price * 100), // Цена в копейках
+        })),
       };
 
-      // Открытие инвойса для оплаты
-      webApp.openInvoice(invoice);
-    });
-
-    // Очищаем обработчик при размонтировании компонента
-    return () => {
-      mainButton.offClick();
-      mainButton.hide();
+      tg.showInvoice(invoiceData, (status) => {
+        if (status === 'ok') {
+          console.log('Платеж успешно выполнен');
+        } else {
+          console.log('Ошибка при оплате');
+        }
+      });
     };
-  }, [cartItems, webApp]);
 
-  return null; // Компонент не рендерит никакие элементы
+    tg.MainButton.onClick(handlePayment);
+
+    return () => {
+      tg.MainButton.offClick(handlePayment); // Чистим обработчик при размонтировании
+    };
+  }, [cartItems, tg]);
+
+  return null; // Этот компонент не рендерит UI, он только управляет кнопкой
 };
 
 export default PaymentButton;
