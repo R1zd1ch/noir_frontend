@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Box, Typography, Button, CircularProgress } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { useWebApp } from '@vkruglikov/react-telegram-web-app';
-import { fetchUser } from '../slices/userSlice.js'; // Import the slice
+import { fetchUser } from '../slices/userSlice.js'; // Импортируем экшен
 
 const WelcomePage = () => {
   const dispatch = useDispatch();
@@ -11,16 +11,31 @@ const WelcomePage = () => {
   // Select loading, error, and user from Redux state
   const { loading, error, user } = useSelector((state) => state.user);
 
-  // Use the Telegram init data, or fallback to default values
+  // Извлекаем данные пользователя из tg.initDataUnsafe
   const telegramId = tg.initDataUnsafe?.user?.id.toString() || '6933164806';
-  const userName = tg.initDataUnsafe?.user?.first_name || 'r1zzd';
+  const username = tg.initDataUnsafe?.user?.username || 'DefaultUsername';
+  const firstName = tg.initDataUnsafe?.user?.first_name || 'DefaultFirstName';
+  const lastName = tg.initDataUnsafe?.user?.last_name || 'DefaultLastName';
+  const languageCode = tg.initDataUnsafe?.user?.language_code || 'en';
+  const isBot = tg.initDataUnsafe?.user?.is_bot || false;
 
-  // Fetch user data when component mounts
+  // Данные для отправки
+  const userData = {
+    telegramId,
+    username,
+    firstName,
+    lastName,
+    languageCode,
+    isBot,
+  };
+
+  // Отправляем данные пользователя при монтировании компонента
   useEffect(() => {
     if (telegramId) {
-      dispatch(fetchUser(telegramId));
+      dispatch(fetchUser(userData)); // Передаем данные пользователя
     }
   }, [dispatch, telegramId]);
+
   if (loading) {
     return (
       <Box
@@ -35,6 +50,7 @@ const WelcomePage = () => {
       </Box>
     );
   }
+
   if (error) return <p>Error: {error}</p>;
 
   return (
@@ -47,7 +63,7 @@ const WelcomePage = () => {
         }}
       >
         <Typography color="white" align="center">
-          Привет, {user?.firstName || userName}!!!
+          Привет, {user?.firstName || firstName}!!!
         </Typography>
       </Box>
       <Box
