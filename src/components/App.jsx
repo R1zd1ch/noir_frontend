@@ -7,9 +7,10 @@ import CatalogPage from './CatalogPage';
 import MainButtonToCart from './MainButtonToCart';
 import CartPage from './CartPage';
 import WelcomePage from './WelcomePage';
+import JewelryDetailsPage from './JewelryDetailsPage'; // Импортируем новый компонент
 
 const AppContent = () => {
-  const location = useLocation(); // Используем useLocation внутри компонента
+  const location = useLocation();
 
   return (
     <>
@@ -19,10 +20,10 @@ const AppContent = () => {
           <Route path="/main" element={<MainPage />} />
           <Route path="/catalog" element={<CatalogPage />} />
           <Route path="/cart" element={<CartPage />} />
+          <Route path="/jewelry/:id" element={<JewelryDetailsPage />} /> {/* Новый маршрут */}
           <Route path="*" />
         </Route>
       </Routes>
-      {/* Условный рендеринг */}
       {location.pathname !== '/cart' ? <MainButtonToCart /> : null}
     </>
   );

@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addToCart, removeFromCart, fetchCartItems } from '../slices/cartSlice';
 import { createSelector } from 'reselect';
 import { useWebApp } from '@vkruglikov/react-telegram-web-app';
+import { useNavigate } from 'react-router-dom'; // Новый импорт для навигации
 
 // Селекторы для оптимизации выборки данных
 const selectCartItems = (state) => state.cart.items;
@@ -20,6 +21,7 @@ const JewelryCard = React.memo(({ jewelry }) => {
   const dispatch = useDispatch();
   const tg = useWebApp();
   const telegramUserId = tg.initDataUnsafe?.user?.id.toString() || '6933164806';
+  const navigate = useNavigate(); // Инициализация навигации
 
   // Отдельные состояния для блокировки каждой кнопки
   const [isAddButtonDisabled, setIsAddButtonDisabled] = useState(false);
@@ -35,6 +37,11 @@ const JewelryCard = React.memo(({ jewelry }) => {
   useEffect(() => {
     dispatch(fetchCartItems(telegramUserId));
   }, [dispatch, telegramUserId]);
+
+  // Обработчик для перехода на полную версию карточки
+  const handleOpenDetails = () => {
+    navigate(`/jewelry/${jewelry.id}`); // Переход на страницу полной версии ювелирного изделия
+  };
 
   // Добавление в корзину
   const handleAddToCart = useCallback(() => {
@@ -70,41 +77,49 @@ const JewelryCard = React.memo(({ jewelry }) => {
 
   return (
     <Card
-      sx={{ height: '100%', backgroundColor: '#212121', color: '#FFFFFF', position: 'relative' }}
+      sx={{
+        height: '100%',
+        backgroundColor: '#212121',
+        color: '#FFFFFF',
+        position: 'relative',
+        cursor: 'pointer',
+      }}
     >
-      {jewelry.images.length > 0 && (
-        <CardMedia
-          component="img"
-          height="200"
-          image={jewelry.images[0].url}
-          alt={jewelry.title}
-          sx={{ objectFit: 'cover' }}
-        />
-      )}
-      <CardContent sx={{ height: '180px', overflow: 'hidden' }}>
-        <Typography variant="h5" component="div" sx={{ whiteSpace: 'normal' }}>
-          {jewelry.title}
-        </Typography>
-        <Box
-          sx={{
-            display: '-webkit-box',
-            overflow: 'hidden',
-            WebkitBoxOrient: 'vertical',
-            WebkitLineClamp: 3,
-            color: 'white',
-          }}
-        >
-          <Typography variant="body2">{jewelry.description}</Typography>
-        </Box>
-        <Typography variant="h6" color="primary">
-          ${jewelry.price.toFixed(2)}
-        </Typography>
-        {jewelry.sold && (
-          <Typography variant="body2" color="error">
-            Продано
-          </Typography>
+      <Box onClick={handleOpenDetails}>
+        {jewelry.images.length > 0 && (
+          <CardMedia
+            component="img"
+            height="200"
+            image={jewelry.images[0].url}
+            alt={jewelry.title}
+            sx={{ objectFit: 'cover' }}
+          />
         )}
-      </CardContent>
+        <CardContent sx={{ height: '180px', overflow: 'hidden' }}>
+          <Typography variant="h5" component="div" sx={{ whiteSpace: 'normal' }}>
+            {jewelry.title}
+          </Typography>
+          <Box
+            sx={{
+              display: '-webkit-box',
+              overflow: 'hidden',
+              WebkitBoxOrient: 'vertical',
+              WebkitLineClamp: 3,
+              color: 'white',
+            }}
+          >
+            <Typography variant="body2">{jewelry.description}</Typography>
+          </Box>
+          <Typography variant="h6" color="primary">
+            ${jewelry.price.toFixed(2)}
+          </Typography>
+          {jewelry.sold && (
+            <Typography variant="body2" color="error">
+              Продано
+            </Typography>
+          )}
+        </CardContent>
+      </Box>
 
       <Box
         sx={{
