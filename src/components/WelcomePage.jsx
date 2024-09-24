@@ -1,37 +1,57 @@
-import React from 'react';
-import { Box, Typography, Button } from '@mui/material';
+import React, { useEffect } from 'react';
+import { Box, Typography, Button, CircularProgress } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchUser } from '../slices/userSlice'; // Import the slice
 import { useWebApp } from '@vkruglikov/react-telegram-web-app';
+import { fetchUser } from '../slices/userSlice.js'; // Import the slice
 
 const WelcomePage = () => {
   const dispatch = useDispatch();
-  // Replace this with the actual telegram ID you want to fetch
   const tg = useWebApp();
+
+  // Select loading, error, and user from Redux state
+  const { loading, error, user } = useSelector((state) => state.user);
+
+  // Use the Telegram init data, or fallback to default values
   const telegramId = tg.initDataUnsafe?.user?.id.toString() || '6933164806';
   const userName = tg.initDataUnsafe?.user?.first_name || 'r1zzd';
+
+  // Fetch user data when component mounts
   useEffect(() => {
-    // Dispatch fetchUser to load the user data
-    dispatch(fetchUser(telegramId));
+    if (telegramId) {
+      dispatch(fetchUser(telegramId));
+    }
   }, [dispatch, telegramId]);
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          minHeight: '600px',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <CircularProgress size={80} />
+      </Box>
+    );
+  }
+  if (error) return <p>Error: {error}</p>;
 
   return (
     <Box sx={{ minHeight: '100vh', marginTop: '20px' }}>
       <Box
         sx={{
-          minHeight: '600px',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
         }}
       >
         <Typography color="white" align="center">
-          Привет, {userName}!!!
+          Привет, {user?.firstName || userName}!!!
         </Typography>
       </Box>
       <Box
         sx={{
-          minHeight: '',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',

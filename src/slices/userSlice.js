@@ -1,19 +1,20 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
+const apiUrl = process.env.REACT_APP_API_URL; // Проверьте, что переменная окружения правильно установлена
+
 // Thunk to fetch user by telegramId
 export const fetchUser = createAsyncThunk(
   'user/fetchUser',
   async (telegramId, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`/api/user/${telegramId}`);
+      const response = await axios.get(`${apiUrl}/api/user/${telegramId}`); // Используем обратные кавычки
       return response.data.user;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
   },
 );
-const { user, loading, error } = useSelector((state) => state.user);
 
 // Slice
 const userSlice = createSlice({
