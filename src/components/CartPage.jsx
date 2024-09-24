@@ -39,7 +39,7 @@ const CartPage = () => {
     cartError,
   } = useSelector((state) => state.cart || {});
   const tg = useWebApp();
-  const userId = tg.initDataUnsafe?.user?.id || '6933164806'; // Telegram userId или тестовое значение
+  const userId = tg.initDataUnsafe?.user?.id.toString() || '6933164806'; // Telegram userId или тестовое значение
 
   const [isRemoving, setIsRemoving] = useState(false); // Состояние для удаления
   const [currentPage, setCurrentPage] = useState(1); // Текущая страница

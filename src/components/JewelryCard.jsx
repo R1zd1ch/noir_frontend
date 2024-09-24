@@ -19,7 +19,7 @@ const selectIsLoading = (state) => state.cart.loading;
 const JewelryCard = React.memo(({ jewelry }) => {
   const dispatch = useDispatch();
   const tg = useWebApp();
-  const telegramUserId = tg.initDataUnsafe?.user?.id || '6933164806';
+  const telegramUserId = tg.initDataUnsafe?.user?.id.toString() || '6933164806';
 
   // Отдельные состояния для блокировки каждой кнопки
   const [isAddButtonDisabled, setIsAddButtonDisabled] = useState(false);

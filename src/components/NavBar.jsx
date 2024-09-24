@@ -15,7 +15,7 @@ const NavBar = () => {
   const { MainButton } = useWebApp();
   const navigate = useNavigate();
   const tg = useWebApp();
-  const userId = tg.initDataUnsafe?.user?.id || '6933164806';
+  const userId = tg.initDataUnsafe?.user?.id.toString() || '6933164806';
 
   const handleHomeClick = () => {
     navigate('/main');
