@@ -19,28 +19,30 @@ const PaymentButton = () => {
     }));
 
     if (cartItems.length > 0) {
-      tg.MainButton.setText(`Оплатить $${totalAmount / 100}`);
+      tg.MainButton.setText(`Оплатить ${totalAmount / 100} ₽`);
       tg.MainButton.show();
     } else {
       tg.MainButton.hide();
     }
 
     const handlePayment = () => {
-      // Отправляем данные на сервер для генерации инвойса
       axios
         .post(`${apiUrl}/api/payment`, {
-          userId: tg.initDataUnsafe.user.id, // Используем текущий userId из Telegram Web App
+          userId: tg.initDataUnsafe.user.id,
           prices,
           totalAmount,
         })
         .then((response) => {
-          const { invoice_payload } = response.data; // Получаем payload инвойса из ответа сервера
+          const { start_parameter } = response.data;
 
-          if (invoice_payload) {
-            // Открываем окно оплаты через Telegram Web App
-            tg.openInvoice(invoice_payload);
+          if (start_parameter) {
+            // Закрыть WebApp перед открытием оплаты
+            tg.close();
+
+            // Открыть окно оплаты через Telegram Web App
+            tg.openInvoice(start_parameter);
           } else {
-            console.error('Ошибка: не удалось получить payload инвойса');
+            console.error('Ошибка: не удалось получить start_parameter');
           }
         })
         .catch((error) => {
