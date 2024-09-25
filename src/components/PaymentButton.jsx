@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useWebApp } from '@vkruglikov/react-telegram-web-app';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
@@ -7,6 +7,7 @@ const PaymentButton = () => {
   const apiUrl = process.env.REACT_APP_API_URL;
   const tg = useWebApp();
   const cartItems = useSelector((state) => state.cart.items);
+  const [isLoading, setIsLoading] = useState(false); // Состояние ожидания загрузки
 
   useEffect(() => {
     const totalAmount = Math.round(
@@ -26,27 +27,32 @@ const PaymentButton = () => {
     }
 
     const handlePayment = () => {
+      setIsLoading(true); // Устанавливаем состояние ожидания
+
       axios
         .post(`${apiUrl}/api/payment`, {
-          userId: tg.initDataUnsafe.user.id,
+          userId: tg.initDataUnsafe.user.id, // ID пользователя Telegram
           prices,
           totalAmount,
         })
         .then((response) => {
-          const { start_parameter } = response.data;
+          const { payload } = response.data;
 
-          if (start_parameter) {
-            // Закрыть WebApp перед открытием оплаты
+          if (payload) {
+            // Закрываем WebApp перед открытием оплаты
             tg.close();
 
-            // Открыть окно оплаты через Telegram Web App
-            tg.openInvoice(start_parameter);
+            // Открываем окно оплаты через Telegram Web App с использованием payload
+            tg.openInvoice(payload);
           } else {
-            console.error('Ошибка: не удалось получить start_parameter');
+            console.error('Ошибка: не удалось получить payload');
           }
         })
         .catch((error) => {
           console.error('Ошибка создания инвойса:', error);
+        })
+        .finally(() => {
+          setIsLoading(false); // Сбрасываем состояние ожидания после получения ответа
         });
     };
 
@@ -56,8 +62,6 @@ const PaymentButton = () => {
       tg.MainButton.offClick(handlePayment);
     };
   }, [cartItems, tg]);
-
-  return null;
 };
 
 export default PaymentButton;
