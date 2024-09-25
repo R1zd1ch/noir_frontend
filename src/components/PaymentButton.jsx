@@ -21,7 +21,7 @@ const PaymentButton = () => {
       const invoiceData = {
         title: 'Оплата заказа',
         description: 'Оплата за выбранные ювелирные изделия',
-        payload: 'Custom-Payload', // Используй любой payload, который подходит для вашей логики
+        payload: `order-${Date.now()}`, // Уникальный payload с таймстампом
         provider_token: '381764678:TEST:96075', // Тестовый токен ЮKassa Test
         start_parameter: 'pay',
         currency: 'USD',
@@ -31,7 +31,7 @@ const PaymentButton = () => {
         })),
       };
 
-      // Показываем инвойс пользователю для оплаты через Telegram WebApp
+      // Открываем окно с инвойсом для оплаты через Telegram WebApp
       tg.showInvoice(invoiceData, (status) => {
         if (status === 'ok') {
           console.log('Платеж успешно выполнен');
