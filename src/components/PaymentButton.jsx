@@ -37,19 +37,13 @@ const PaymentButton = () => {
           totalAmount,
         })
         .then((response) => {
-          const { payload } = response.data;
+          const { status } = response.data;
 
-          if (payload) {
+          if (status === 'ok') {
             // Закрываем WebApp перед открытием оплаты
             tg.close();
-
-            // Открываем окно оплаты через Telegram Web App с использованием payload
-            tg.openInvoice(payload);
-
-            // После того как окно оплаты открыто, закрываем Web App
-            tg.close();
           } else {
-            console.error('Ошибка: не удалось получить payload');
+            console.error('Ошибка: не удалось получить данные');
           }
         })
         .catch((error) => {
