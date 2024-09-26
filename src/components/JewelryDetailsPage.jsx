@@ -114,9 +114,16 @@ const JewelryDetailsPage = () => {
       </Typography>
 
       {/* Статус наличия */}
-      {jewelry.sold && (
+      {jewelry.quantity <= 0 && (
         <Typography variant="body2" color="error" sx={{ marginTop: '10px' }}>
           Это изделие продано
+        </Typography>
+      )}
+
+      {/* Сообщение о доступности, если количество меньше или равно 0 */}
+      {jewelry.quantity <= 0 && (
+        <Typography variant="body2" color="error" sx={{ marginTop: '10px' }}>
+          Это изделие больше недоступно
         </Typography>
       )}
 
@@ -127,7 +134,7 @@ const JewelryDetailsPage = () => {
             variant="contained"
             color="secondary"
             onClick={handleRemoveFromCart}
-            disabled={isRemoveFromCartDisabled || jewelry.sold}
+            disabled={isRemoveFromCartDisabled || jewelry.quantity <= 0}
             sx={{ marginTop: '30px' }}
           >
             Удалить из корзины
@@ -137,7 +144,9 @@ const JewelryDetailsPage = () => {
             variant="contained"
             color="primary"
             onClick={handleAddToCart}
-            disabled={isAddToCartDisabled || jewelry.sold}
+            disabled={
+              isAddToCartDisabled || jewelry.quantity <= 0 // Блокируем кнопку, если количество <= 0
+            }
             sx={{ marginTop: '30px' }}
           >
             Добавить в корзину

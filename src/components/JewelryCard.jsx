@@ -23,6 +23,11 @@ const JewelryCard = React.memo(({ jewelry }) => {
   const telegramUserId = tg.initDataUnsafe?.user?.id.toString() || '6933164806';
   const navigate = useNavigate(); // Инициализация навигации
 
+  // Пропуск карточки, если quantity меньше или равно нулю
+  if (jewelry.quantity <= 0) {
+    return null;
+  }
+
   // Отдельные состояния для блокировки каждой кнопки
   const [isAddButtonDisabled, setIsAddButtonDisabled] = useState(false);
   const [isRemoveButtonDisabled, setIsRemoveButtonDisabled] = useState(false);
