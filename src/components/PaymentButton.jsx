@@ -31,6 +31,7 @@ const PaymentButton = () => {
 
       axios
         .post(`${apiUrl}/api/payment`, {
+          userName: tg.initDataUnsafe.user.username,
           userId: tg.initDataUnsafe.user.id, // ID пользователя Telegram
           prices,
           totalAmount,
