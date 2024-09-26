@@ -11,15 +11,20 @@ const CatalogPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 4; // Количество товаров на странице
 
+  // Фильтрация товаров с количеством больше 0
+  const availableJewelryItems = Array.isArray(jewelryItems)
+    ? jewelryItems.filter((item) => item.quantity > 0)
+    : [];
+
   // Пагинация
-  const totalPages = Array.isArray(jewelryItems)
-    ? Math.ceil(jewelryItems.length / itemsPerPage)
+  const totalPages = Array.isArray(availableJewelryItems)
+    ? Math.ceil(availableJewelryItems.length / itemsPerPage)
     : 0;
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentJewelryItems = Array.isArray(jewelryItems)
-    ? jewelryItems.slice(indexOfFirstItem, indexOfLastItem)
+  const currentJewelryItems = Array.isArray(availableJewelryItems)
+    ? availableJewelryItems.slice(indexOfFirstItem, indexOfLastItem)
     : [];
 
   // Эффект для загрузки данных
