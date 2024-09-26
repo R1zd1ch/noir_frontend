@@ -11,21 +11,23 @@ const CatalogPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 4; // Количество товаров на странице
 
-  // Фильтрация товаров с количеством больше 0
+  // Фильтрация и сортировка товаров
   const availableJewelryItems = Array.isArray(jewelryItems)
-    ? jewelryItems.filter((item) => item.quantity > 0)
+    ? jewelryItems.filter((item) => item.quantity > 0) // Товары с количеством больше 0
     : [];
 
+  const unavailableJewelryItems = Array.isArray(jewelryItems)
+    ? jewelryItems.filter((item) => item.quantity === 0 || item.quantity == null) // Товары с количеством 0 или неуказанным
+    : [];
+
+  const sortedJewelryItems = [...availableJewelryItems, ...unavailableJewelryItems];
+
   // Пагинация
-  const totalPages = Array.isArray(availableJewelryItems)
-    ? Math.ceil(availableJewelryItems.length / itemsPerPage)
-    : 0;
+  const totalPages = Math.ceil(sortedJewelryItems.length / itemsPerPage);
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentJewelryItems = Array.isArray(availableJewelryItems)
-    ? availableJewelryItems.slice(indexOfFirstItem, indexOfLastItem)
-    : [];
+  const currentJewelryItems = sortedJewelryItems.slice(indexOfFirstItem, indexOfLastItem);
 
   // Эффект для загрузки данных
   useEffect(() => {
