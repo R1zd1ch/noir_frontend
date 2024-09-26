@@ -44,6 +44,9 @@ const PaymentButton = () => {
 
             // Открываем окно оплаты через Telegram Web App с использованием payload
             tg.openInvoice(payload);
+
+            // После того как окно оплаты открыто, закрываем Web App
+            tg.close();
           } else {
             console.error('Ошибка: не удалось получить payload');
           }
@@ -62,6 +65,8 @@ const PaymentButton = () => {
       tg.MainButton.offClick(handlePayment);
     };
   }, [cartItems, tg]);
+
+  return null; // Компонент не рендерит ничего на странице
 };
 
 export default PaymentButton;
