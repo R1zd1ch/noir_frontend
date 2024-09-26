@@ -24,9 +24,9 @@ const JewelryCard = React.memo(({ jewelry }) => {
   const navigate = useNavigate(); // Инициализация навигации
 
   // Пропуск карточки, если quantity меньше или равно нулю
-  if (jewelry.quantity <= 0) {
-    return null;
-  }
+  // if (jewelry.quantity <= 0) {
+  //   return null;
+  // }
 
   // Отдельные состояния для блокировки каждой кнопки
   const [isAddButtonDisabled, setIsAddButtonDisabled] = useState(false);
@@ -118,7 +118,7 @@ const JewelryCard = React.memo(({ jewelry }) => {
           <Typography variant="h6" color="primary">
             ${jewelry.price.toFixed(2)}
           </Typography>
-          {jewelry.sold && (
+          {jewelry.quantity <= 0 && (
             <Typography variant="body2" color="error">
               Продано
             </Typography>
@@ -141,7 +141,7 @@ const JewelryCard = React.memo(({ jewelry }) => {
           onClick={handleRemoveFromCart}
           onTouchStart={() => setIsRemoveHovered(true)}
           onTouchEnd={() => setIsRemoveHovered(false)}
-          disabled={isLoading || !isInCart || jewelry.sold || isRemoveButtonDisabled}
+          disabled={isLoading || !isInCart || jewelry.quantity <= 0 || isRemoveButtonDisabled}
           sx={{
             color: '#FF0000',
             backgroundColor: isRemoveHovered ? '#FF4C4C' : '#000', // Подсветка
@@ -158,7 +158,7 @@ const JewelryCard = React.memo(({ jewelry }) => {
           onClick={handleAddToCart}
           onTouchStart={() => setIsAddHovered(true)}
           onTouchEnd={() => setIsAddHovered(false)}
-          disabled={isLoading || isInCart || jewelry.sold || isAddButtonDisabled}
+          disabled={isLoading || isInCart || jewelry.quantity <= 0 || isAddButtonDisabled}
           sx={{
             color: '#00FF00',
             backgroundColor: isAddHovered ? '#4CFF4C' : '#000', // Подсветка
