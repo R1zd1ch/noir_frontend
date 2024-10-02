@@ -4,7 +4,7 @@ import { WebAppProvider } from '@vkruglikov/react-telegram-web-app';
 import { Provider } from 'react-redux';
 import { store } from './slices/index';
 import { ThemeProvider, CssBaseline } from '@mui/material';
-import App from './components/App';
+import App from './App';
 import theme from './theme/theme';
 // import resources from './locales/index.js';
 

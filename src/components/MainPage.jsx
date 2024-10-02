@@ -1,6 +1,5 @@
 import React from 'react';
 import { Typography, Box, Button, Container } from '@mui/material';
-import { useWebApp } from '@vkruglikov/react-telegram-web-app';
 import { useNavigate } from 'react-router-dom';
 import firstImage from '../assets/mainpageImg.jpg';
 import secondImage from '../assets/mainpageImg2.jpg';
@@ -12,7 +11,6 @@ const robotoFont = {
 
 const MainPage = () => {
   const navigate = useNavigate();
-  const tg = useWebApp();
 
   return (
     <Container maxWidth="lg">

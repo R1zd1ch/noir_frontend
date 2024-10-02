@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useWebApp } from '@vkruglikov/react-telegram-web-app';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
@@ -41,7 +41,9 @@ const PaymentButton = () => {
 
           if (status === 'ok') {
             // Закрываем WebApp перед открытием оплаты
-            tg.close();
+            if (!isLoading) {
+              tg.close();
+            }
           } else {
             console.error('Ошибка: не удалось получить данные');
           }
@@ -59,7 +61,7 @@ const PaymentButton = () => {
     return () => {
       tg.MainButton.offClick(handlePayment);
     };
-  }, [cartItems, tg]);
+  }, [cartItems, tg, apiUrl, isLoading]);
 
   return null; // Компонент не рендерит ничего на странице
 };

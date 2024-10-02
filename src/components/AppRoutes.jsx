@@ -1,15 +1,13 @@
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
-import { useWebApp } from '@vkruglikov/react-telegram-web-app';
-import { useEffect } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import Root from './Root';
 import MainPage from './MainPage';
-import CatalogPage from './CatalogPage';
-import MainButtonToCart from './MainButtonToCart';
-import CartPage from './CartPage';
+import CatalogPage from './Catalog/CatalogPage';
+import MainButtonToCart from './Buttons/MainButtonToCart';
+import CartPage from './Cart/CartPage';
 import WelcomePage from './WelcomePage';
-import JewelryDetailsPage from './JewelryDetailsPage'; // Импортируем новый компонент
+import JewelryDetailsPage from './Catalog/JewelryDetailsPage'; // Импортируем новый компонент
 
-const AppContent = () => {
+const AppRoutes = () => {
   const location = useLocation();
 
   return (
@@ -29,20 +27,4 @@ const AppContent = () => {
   );
 };
 
-const App = () => {
-  const tg = useWebApp();
-
-  useEffect(() => {
-    if (tg.initData) {
-      tg.ready();
-    }
-  }, [tg]);
-
-  return (
-    <BrowserRouter>
-      <AppContent />
-    </BrowserRouter>
-  );
-};
-
-export default App;
+export default AppRoutes;

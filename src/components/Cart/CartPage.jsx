@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { Typography, Grid, Box, CircularProgress, Pagination } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchCartItems, removeFromCart } from '../slices/cartSlice';
+import { fetchCartItems, removeFromCart } from '../../slices/cartSlice';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { keyframes } from '@mui/system';
-import PaymentButton from './PaymentButton'; // Импортируем компонент оплаты
+import PaymentButton from '../Buttons/PaymentButton'; // Импортируем компонент оплаты
 import CartJewelry from './CartJewelry';
 
 const fadeIn = keyframes`

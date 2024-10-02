@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Grid, CircularProgress, Typography, Box, Pagination, Button } from '@mui/material';
-import { fetchJewelryItems, resetStatus } from '../slices/JewelrySlice';
+import { fetchJewelryItems, resetStatus } from '../../slices/JewelrySlice';
 import JewelryCard from './JewelryCard';
 
 const CatalogPage = () => {

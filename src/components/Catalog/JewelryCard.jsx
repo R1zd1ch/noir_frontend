@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Card, CardContent, CardMedia, Typography, Box, IconButton } from '@mui/material';
 import { Add as AddIcon, Remove as RemoveIcon } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
-import { addToCart, removeFromCart, fetchCartItems } from '../slices/cartSlice';
+import { addToCart, removeFromCart, fetchCartItems } from '../../slices/cartSlice';
 import { createSelector } from 'reselect';
 import { useWebApp } from '@vkruglikov/react-telegram-web-app';
 import { useNavigate } from 'react-router-dom'; // Новый импорт для навигации
@@ -35,7 +35,7 @@ const JewelryCard = React.memo(({ jewelry }) => {
   const [isRemoveHovered, setIsRemoveHovered] = useState(false);
 
   // Получаем статус и наличие товара в корзине через селекторы
-  const isInCart = useSelector(useCallback(selectIsInCart(jewelry.id), [jewelry.id]));
+  const isInCart = useSelector((state) => selectIsInCart(jewelry.id)(state));
   const isLoading = useSelector(selectIsLoading); // Отслеживаем статус загрузки из Redux
 
   // Загружаем корзину при монтировании компонента
