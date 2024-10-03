@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-
 // Async actions
 const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -8,7 +7,7 @@ export const addToCart = createAsyncThunk(
   `${apiUrl}cart/addToCart`,
   async ({ jewelryId, telegramUserId }) => {
     console.log('Sending data:', { telegramUserId, jewelryId }); // Логируем отправляемые данные
-    const response = await axios.post(`${apiUrl}/api/cart`, { userId: telegramUserId, jewelryId });
+    const response = await axios.post(`${apiUrl}/api/cart`, { telegramUserId, jewelryId });
     return response.data;
   },
 );
@@ -17,7 +16,7 @@ export const removeFromCart = createAsyncThunk(
   'cart/removeFromCart',
   async ({ jewelryId, telegramUserId }) => {
     const response = await axios.delete(`${apiUrl}/api/cart/${jewelryId}`, {
-      data: { userId: telegramUserId },
+      data: { telegramUserId },
     });
     return response.data;
   },
@@ -26,6 +25,7 @@ export const removeFromCart = createAsyncThunk(
 export const fetchCartItems = createAsyncThunk(
   `${apiUrl}cart/fetchCartItems`,
   async (telegramUserId) => {
+    console.log(telegramUserId);
     const response = await axios.get(`${apiUrl}/api/cart/${telegramUserId}`);
     console.log('Server response:', response.data); // Добавим логирование ответа сервера
     return response.data;
