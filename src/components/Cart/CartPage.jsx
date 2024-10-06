@@ -75,7 +75,7 @@ const CartPage = () => {
       setTimeout(() => {
         setLocalCartItems((prevItems) => prevItems.filter((item) => item.jewelryId !== jewelryId));
 
-        dispatch(removeFromCart({ jewelryId, telegramUserId: '6933164806' })).finally(() => {
+        dispatch(removeFromCart({ jewelryId, telegramUserId: userId })).finally(() => {
           setIsRemoving(false);
         });
       }, 500);
