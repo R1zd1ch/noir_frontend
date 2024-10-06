@@ -6,6 +6,7 @@ import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { keyframes } from '@mui/system';
 import PaymentButton from '../Buttons/PaymentButton'; // Импортируем компонент оплаты
 import CartJewelry from './CartJewelry';
+import { useWebApp } from '@vkruglikov/react-telegram-web-app';
 
 const fadeIn = keyframes`
   from {
@@ -30,6 +31,9 @@ const fadeOut = keyframes`
 `;
 
 const CartPage = () => {
+  const tg = useWebApp();
+  const tgUserId = tg.initDataUnsafe?.user?.id.toString();
+  const userId = tgUserId || '6933164806';
   const dispatch = useDispatch();
   const {
     items: cartItems = [],
@@ -45,7 +49,7 @@ const CartPage = () => {
   const [localCartItems, setLocalCartItems] = useState(cartItems || []);
 
   useEffect(() => {
-    const userId = '6933164806'; // Telegram userId или тестовое значение
+    // Telegram userId или тестовое значение
     if (userId && cartItems.length === 0) {
       dispatch(fetchCartItems(userId))
         .unwrap()
@@ -57,7 +61,7 @@ const CartPage = () => {
           setLocalCartItems([]);
         });
     }
-  }, [dispatch, cartItems.length]);
+  }, [dispatch, cartItems.length, userId]);
 
   const handleRemove = useCallback(
     (jewelryId) => {
