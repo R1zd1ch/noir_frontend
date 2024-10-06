@@ -9,6 +9,7 @@ const PaymentButton = () => {
   const tg = useWebApp();
   const cartItems = useSelector((state) => state.cart.items);
   const totalAmount = useSelector(selectTotalAmount); // Получаем сумму корзины из Redux
+
   const [isLoading, setIsLoading] = useState(false); // Состояние ожидания загрузки
 
   useEffect(() => {
@@ -18,7 +19,7 @@ const PaymentButton = () => {
     }));
 
     if (cartItems.length > 0) {
-      tg.MainButton.setText(`Оплатить ${totalAmount} ₽`); // Обновляем текст кнопки
+      tg.MainButton.setText(`Оплатить ${totalAmount} ₽`);
       tg.MainButton.show();
     } else {
       tg.MainButton.hide();

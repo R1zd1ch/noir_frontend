@@ -32,14 +32,14 @@ export const fetchCartItems = createAsyncThunk(
   },
 );
 
-export const selectTotalAmount = (state) => state.cart.totalAmount;
+export const selectTotalAmount = (state) =>
+  state.cart.items.reduce((total, item) => total + item.jewelry.price, 0);
 
 const cartSlice = createSlice({
   name: 'cart',
   initialState: {
     items: [],
     status: 'idle', // Общий статус для операций с корзиной
-    totalAmount: 0, // Добавляем поле для общей суммы
     fetchStatus: 'idle', // Статус для загрузки корзины
     error: null, // Общая ошибка
     fetchError: null, // Ошибка при загрузке корзины
@@ -64,7 +64,6 @@ const cartSlice = createSlice({
       .addCase(addToCart.fulfilled, (state, action) => {
         state.status = 'succeeded'; // Успешная загрузка
         state.items.push(action.payload);
-        state.totalAmount = state.items.reduce((total, item) => total + item.jewelry.price, 0); // Пересчитываем сумму после загрузки корзины
       })
       .addCase(addToCart.rejected, (state, action) => {
         state.status = 'failed'; // Ошибка при добавлении товара
@@ -79,7 +78,6 @@ const cartSlice = createSlice({
       .addCase(removeFromCart.fulfilled, (state, action) => {
         state.status = 'succeeded'; // Успешное удаление товара
         state.items = state.items.filter((item) => item.jewelryId !== action.payload.jewelryId);
-        state.totalAmount = state.items.reduce((total, item) => total + item.jewelry.price, 0); // Пересчитываем сумму после загрузки корзины
       })
       .addCase(removeFromCart.rejected, (state, action) => {
         state.status = 'failed'; // Ошибка при удалении товара
@@ -99,7 +97,6 @@ const cartSlice = createSlice({
           jewelryId: item.jewelryId,
           jewelry: item.jewelry,
         }));
-        state.totalAmount = state.items.reduce((total, item) => total + item.jewelry.price, 0); // Пересчитываем сумму после загрузки корзины
       })
       .addCase(fetchCartItems.rejected, (state, action) => {
         state.fetchStatus = 'failed'; // Ошибка при загрузке корзины
