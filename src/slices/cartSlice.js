@@ -32,6 +32,9 @@ export const fetchCartItems = createAsyncThunk(
   },
 );
 
+export const selectTotalAmount = (state) =>
+  state.cart.items.reduce((total, item) => total + item.jewelry.price, 0);
+
 const cartSlice = createSlice({
   name: 'cart',
   initialState: {

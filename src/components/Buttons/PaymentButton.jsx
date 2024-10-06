@@ -1,19 +1,18 @@
 import { useEffect, useState } from 'react';
 import { useWebApp } from '@vkruglikov/react-telegram-web-app';
 import { useSelector } from 'react-redux';
+import { selectTotalAmount } from '../../slices/cartSlice';
 import axios from 'axios';
 
 const PaymentButton = () => {
   const apiUrl = process.env.REACT_APP_API_URL;
   const tg = useWebApp();
   const cartItems = useSelector((state) => state.cart.items);
+  const totalAmount = useSelector(selectTotalAmount); // Получаем сумму корзины из Redux
+
   const [isLoading, setIsLoading] = useState(false); // Состояние ожидания загрузки
 
   useEffect(() => {
-    const totalAmount = Math.round(
-      cartItems.reduce((total, item) => total + item.jewelry.price, 0) * 100,
-    );
-
     const prices = cartItems.map((item) => ({
       label: item.jewelry.title,
       amount: Math.round(item.jewelry.price * 100),
@@ -61,7 +60,7 @@ const PaymentButton = () => {
     return () => {
       tg.MainButton.offClick(handlePayment);
     };
-  }, [cartItems, tg, apiUrl, isLoading]);
+  }, [cartItems, tg, apiUrl, isLoading, totalAmount]);
 
   return null; // Компонент не рендерит ничего на странице
 };
