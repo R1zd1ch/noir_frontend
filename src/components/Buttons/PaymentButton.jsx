@@ -9,17 +9,16 @@ const PaymentButton = () => {
   const tg = useWebApp();
   const cartItems = useSelector((state) => state.cart.items);
   const totalAmount = useSelector(selectTotalAmount); // Получаем сумму корзины из Redux
-
   const [isLoading, setIsLoading] = useState(false); // Состояние ожидания загрузки
 
   useEffect(() => {
     const prices = cartItems.map((item) => ({
       label: item.jewelry.title,
-      amount: Math.round(item.jewelry.price * 100),
+      amount: item.jewelry.price,
     }));
 
     if (cartItems.length > 0) {
-      tg.MainButton.setText(`Оплатить ${totalAmount / 100} ₽`);
+      tg.MainButton.setText(`Оплатить ${totalAmount} ₽`); // Обновляем текст кнопки
       tg.MainButton.show();
     } else {
       tg.MainButton.hide();
