@@ -8,7 +8,12 @@ const MainButtonToCart = () => {
   return (
     <MainButton
       text="TO CART"
-      params={mainButtonStyles.darkTheme} // Применяем стили для тёмной темы
+      params={{
+        color: '#000000', // Белый текст
+        text_color: '#FFFFFF', // Чёрный текст кнопки (можно кастомизировать)
+        is_active: true, // Активируем кнопку
+        is_visible: true, // Отображаем кнопку
+      }} // Применяем стили для тёмной темы
       onClick={() => navigate('/cart')}
     />
   );

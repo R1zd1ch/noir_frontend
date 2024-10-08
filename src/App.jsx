@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import { fetchUser } from './slices/userSlice';
 import AppRoutes from './components/AppRoutes';
 import BackgroundImage from './components/BackgroundImage';
+
 const App = () => {
   const tg = useWebApp();
   const dispatch = useDispatch();
