@@ -5,7 +5,7 @@ const navBarStyles = (theme) => ({
     boxShadow: 50,
   },
   toolbar: {
-    height: '75px',
+    height: '80px',
     display: 'flex',
     alignItems: 'center',
   },

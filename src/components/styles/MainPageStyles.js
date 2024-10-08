@@ -1,4 +1,4 @@
-// MainPageStyles.js
+import backgroundImage from '../../assets/fon.jpg';
 export const robotoFont = {
   fontFamily: '"Roboto", sans-serif',
 };
@@ -10,8 +10,10 @@ export const fadeIn = {
 
 export const heroSection = {
   position: 'relative',
+  overflow: 'hidden',
   padding: '120px 0',
   textAlign: 'center',
+  borderRadius: '0 0 40px 40px',
   '&::before': {
     content: '""',
     position: 'absolute',
@@ -34,4 +36,22 @@ export const buttonStyles = {
   '&:hover, &:active': {
     backgroundColor: '#333',
   },
+};
+
+export const containerStyles = {
+  position: 'relative', // Нужен для работы псевдоэлемента
+  backgroundImage: `url(${backgroundImage})`,
+  backgroundSize: 'cover',
+  backgroundPosition: 'center',
+  '&::before': {
+    content: '""',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Полупрозрачный чёрный слой
+    zIndex: 1, // Этот слой будет под контентом
+  },
+  zIndex: 2, // Контент будет выше псевдоэлемента с затемнением
 };

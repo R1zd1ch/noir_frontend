@@ -4,13 +4,19 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import firstImage from '../assets/mainpageImg.jpg';
 import secondImage from '../assets/mainpageImg2.jpg';
-import { robotoFont, fadeIn, heroSection, buttonStyles } from './styles/MainPageStyles'; // Импорт стилей
+import {
+  robotoFont,
+  fadeIn,
+  heroSection,
+  buttonStyles,
+  containerStyles,
+} from './styles/MainPageStyles'; // Импорт стилей
 
 const MainPage = () => {
   const navigate = useNavigate();
 
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="lg" minHeight="800px" sx={{ ...containerStyles }}>
       {/* Hero Section */}
       <Box
         sx={{
@@ -57,7 +63,10 @@ const MainPage = () => {
       </Box>
 
       {/* About Section */}
-      <Box sx={{ py: 6, textAlign: 'center' }} style={robotoFont}>
+      <Box
+        sx={{ py: 6, textAlign: 'center', position: 'relative', zIndex: 2 }} // Добавлены position и zIndex
+        style={robotoFont}
+      >
         <motion.div initial="hidden" animate="visible" variants={fadeIn}>
           <Typography variant="h4" gutterBottom sx={robotoFont}>
             О бренде Noir
@@ -66,18 +75,9 @@ const MainPage = () => {
             свет и тьма в одном обличье - парадокс бытия, в котором мы пребываем...
           </Typography>
           <Button
-            variant="outlined"
-            sx={{
-              borderColor: '#000',
-              color: '#000',
-              borderRadius: 4,
-              padding: '10px 20px',
-              '&:hover, &:active': {
-                borderColor: '#333',
-                color: '#333',
-              },
-              ...robotoFont,
-            }}
+            variant="contained"
+            size="large"
+            sx={buttonStyles}
             onClick={() => alert('Узнать больше')}
           >
             Узнать больше

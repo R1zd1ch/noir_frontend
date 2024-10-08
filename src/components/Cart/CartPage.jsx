@@ -27,7 +27,7 @@ const CartPage = () => {
   const itemsPerPage = 4;
   const [localCartItems, setLocalCartItems] = useState(cartItems || []);
 
-  // Эффект для загрузки товаров в корзине, мемоизируем зависимости
+  // Эффект для загрузки товаров в корзине
   useEffect(() => {
     if (userId && cartItems.length === 0) {
       dispatch(fetchCartItems(userId))
@@ -80,6 +80,11 @@ const CartPage = () => {
     () => fetchStatus === 'loading' || cartStatus === 'loading' || isRemoving,
     [fetchStatus, cartStatus, isRemoving],
   );
+
+  // Рассчитываем сумму заказа
+  const totalAmount = useMemo(() => {
+    return localCartItems.reduce((sum, item) => sum + item.jewelry.price, 0);
+  }, [localCartItems]);
 
   if (isLoading) {
     return (
@@ -144,7 +149,8 @@ const CartPage = () => {
           color="primary"
         />
       </Box>
-      <PaymentButton />
+      {/* Передаём сумму заказа в PaymentButton */}
+      <PaymentButton totalAmount={totalAmount} />
     </Box>
   );
 };
