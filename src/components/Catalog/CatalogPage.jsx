@@ -1,58 +1,60 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Grid, CircularProgress, Typography, Box, Pagination, Button } from '@mui/material';
 import { fetchJewelryItems, resetStatus } from '../../slices/JewelrySlice';
 import JewelryCard from './JewelryCard';
+import catalogPageStyles from './styles/CatalogPageStyles';
 
 const CatalogPage = () => {
   const dispatch = useDispatch();
   const { items: jewelryItems, status, error } = useSelector((state) => state.jewelry);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 4; // Количество товаров на странице
+  const itemsPerPage = 4;
 
-  // Фильтрация и сортировка товаров
-  const availableJewelryItems = Array.isArray(jewelryItems)
-    ? jewelryItems.filter((item) => item.quantity > 0) // Товары с количеством больше 0
-    : [];
+  // Мемоизация фильтрованных и отсортированных товаров
+  const sortedJewelryItems = useMemo(() => {
+    if (!Array.isArray(jewelryItems)) return [];
+    const availableJewelryItems = jewelryItems.filter((item) => item.quantity > 0);
+    const unavailableJewelryItems = jewelryItems.filter(
+      (item) => item.quantity === 0 || item.quantity == null,
+    );
+    return [...availableJewelryItems, ...unavailableJewelryItems];
+  }, [jewelryItems]);
 
-  const unavailableJewelryItems = Array.isArray(jewelryItems)
-    ? jewelryItems.filter((item) => item.quantity === 0 || item.quantity == null) // Товары с количеством 0 или неуказанным
-    : [];
+  // Пагинация: индексы для текущей страницы
+  const totalPages = useMemo(
+    () => Math.ceil(sortedJewelryItems.length / itemsPerPage),
+    [sortedJewelryItems.length],
+  );
+  const currentJewelryItems = useMemo(() => {
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    return sortedJewelryItems.slice(indexOfFirstItem, indexOfLastItem);
+  }, [currentPage, sortedJewelryItems, itemsPerPage]);
 
-  const sortedJewelryItems = [...availableJewelryItems, ...unavailableJewelryItems];
-
-  // Пагинация
-  const totalPages = Math.ceil(sortedJewelryItems.length / itemsPerPage);
-
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentJewelryItems = sortedJewelryItems.slice(indexOfFirstItem, indexOfLastItem);
-
-  // Эффект для загрузки данных
+  // Загрузка данных при монтировании
   useEffect(() => {
-    // Сбрасываем статус перед новой загрузкой данных
     dispatch(resetStatus());
     dispatch(fetchJewelryItems());
   }, [dispatch]);
 
-  // Эффект для сброса ошибки при повторной попытке
+  // Сброс ошибки при успешной загрузке
   useEffect(() => {
     if (status === 'succeeded') {
-      dispatch(resetStatus()); // Сбрасываем ошибку после успешной загрузки данных
+      dispatch(resetStatus());
     }
   }, [status, dispatch]);
 
+  // Обработчик смены страницы с мемоизацией
+  const handlePageChange = useCallback((event, value) => {
+    setCurrentPage(value);
+    window.scrollTo(0, 0);
+  }, []);
+
   if (status === 'loading') {
     return (
-      <Box
-        sx={{
-          minHeight: '600px',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
+      <Box sx={catalogPageStyles.loadingBox}>
         <CircularProgress size={80} />
       </Box>
     );
@@ -60,17 +62,12 @@ const CatalogPage = () => {
 
   if (error && status !== 'succeeded') {
     return (
-      <Box
-        sx={{
-          minHeight: '600px',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
-        <Typography color="white">Ошибка: {error}</Typography>
-        <Typography color="white">Чтобы сообщить об ошибке и поныть</Typography>
-        <Typography color="white" align="center">
+      <Box sx={catalogPageStyles.errorBox}>
+        <Typography sx={catalogPageStyles.complainText}>Ошибка: {error}</Typography>
+        <Typography sx={catalogPageStyles.complainText}>
+          Чтобы сообщить об ошибке и поныть
+        </Typography>
+        <Typography sx={catalogPageStyles.complainText} align="center">
           Нажмите на&nbsp;
           <Button
             variant="contained"
@@ -78,7 +75,7 @@ const CatalogPage = () => {
             href="https://t.me/r1zzd"
             target="_blank"
             rel="noopener noreferrer"
-            sx={{ marginLeft: 1 }}
+            sx={catalogPageStyles.complainButton}
           >
             Пожаловаться
           </Button>
@@ -86,7 +83,7 @@ const CatalogPage = () => {
         <Button
           variant="contained"
           color="secondary"
-          sx={{ marginTop: 2 }}
+          sx={catalogPageStyles.retryButton}
           onClick={() => dispatch(fetchJewelryItems())}
         >
           Повторить загрузку
@@ -97,34 +94,18 @@ const CatalogPage = () => {
 
   if (currentJewelryItems.length === 0 && status !== 'loading') {
     return (
-      <Box sx={{ minHeight: '550px', marginTop: '50px' }}>
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-            textAlign: 'center',
-            padding: 2,
-          }}
-        >
-          <Typography color="white" variant="h6">
-            Нет доступных украшений для отображения
-          </Typography>
-        </Box>
+      <Box sx={catalogPageStyles.noItemsBox}>
+        <Typography sx={catalogPageStyles.noItemsText} variant="h6">
+          Нет доступных украшений для отображения
+        </Typography>
       </Box>
     );
   }
 
-  const handlePageChange = (event, value) => {
-    setCurrentPage(value);
-    window.scrollTo(0, 0);
-  };
-
   return (
-    <Box sx={{ minHeight: '808px', padding: 2 }}>
-      <Box sx={{ minHeight: '808px' }}>
-        <Typography color="white" variant="h2" align="center" paddingBottom={2}>
+    <Box sx={catalogPageStyles.pageContainer}>
+      <Box sx={catalogPageStyles.itemsContainer}>
+        <Typography sx={catalogPageStyles.itemsTitle} variant="h2" align="center">
           Наши украшения:
         </Typography>
         <Grid container spacing={1}>
@@ -135,7 +116,7 @@ const CatalogPage = () => {
           ))}
         </Grid>
       </Box>
-      <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
+      <Box sx={catalogPageStyles.paginationBox}>
         <Pagination
           count={totalPages}
           page={currentPage}

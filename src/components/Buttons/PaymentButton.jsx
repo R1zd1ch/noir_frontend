@@ -3,6 +3,7 @@ import { useWebApp } from '@vkruglikov/react-telegram-web-app';
 import { useSelector } from 'react-redux';
 import { selectTotalAmount } from '../../slices/cartSlice';
 import axios from 'axios';
+import MainButtonStyles from './styles/MainButtonStyles'; // Импорт стилей кнопки
 
 const PaymentButton = () => {
   const apiUrl = process.env.REACT_APP_API_URL;
@@ -20,8 +21,13 @@ const PaymentButton = () => {
 
     if (cartItems.length > 0) {
       tg.MainButton.setText(`Оплатить ${totalAmount} ₽`);
+      tg.MainButton.setParams({
+        ...MainButtonStyles.darkTheme, // Применяем стили для тёмной темы
+        text: `Оплатить ${totalAmount} ₽`, // Динамически меняем текст кнопки
+      });
       tg.MainButton.show();
     } else {
+      tg.MainButton.setParams(MainButtonStyles.hidden); // Скрываем текст, если корзина пуста
       tg.MainButton.hide();
     }
 

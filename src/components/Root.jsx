@@ -2,23 +2,12 @@ import { Outlet } from 'react-router-dom';
 import { Box } from '@mui/material';
 import NavBar from './NavBar';
 import Footer from './Footer';
+import rootStyles from './styles/RootStyles'; // Импортируем стили
 
 const Root = () => (
-  <Box
-    sx={{
-      display: 'flex',
-      flexDirection: 'column',
-      MinHeight: '100vh',
-    }}
-  >
+  <Box sx={rootStyles.rootContainer}>
     <NavBar />
-    <Box
-      sx={{
-        flexGrow: 1,
-        overflowY: 'auto',
-        marginTop: '80px',
-      }}
-    >
+    <Box sx={rootStyles.contentContainer}>
       <Outlet />
       <Footer />
     </Box>

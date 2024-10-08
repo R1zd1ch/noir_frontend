@@ -3,38 +3,17 @@ import { Typography, Grid, Box, CircularProgress, Pagination } from '@mui/materi
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchCartItems, removeFromCart } from '../../slices/cartSlice';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
-import { keyframes } from '@mui/system';
-import PaymentButton from '../Buttons/PaymentButton'; // Импортируем компонент оплаты
+import PaymentButton from '../Buttons/PaymentButton';
 import CartJewelry from './CartJewelry';
 import { useWebApp } from '@vkruglikov/react-telegram-web-app';
-
-const fadeIn = keyframes`
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-`;
-
-const fadeOut = keyframes`
-  from {
-    opacity: 1;
-    transform: scale(1);
-  }
-  to {
-    opacity: 0.9;
-    transform: scale(0.9);
-  }
-`;
+import cartPageStyles, { fadeIn, fadeOut } from './styles/CartPageStyles';
 
 const CartPage = () => {
   const tg = useWebApp();
   const tgUserId = tg.initDataUnsafe?.user?.id.toString();
   const userId = tgUserId || '6933164806';
   const dispatch = useDispatch();
+
   const {
     items: cartItems = [],
     cartStatus,
@@ -48,14 +27,12 @@ const CartPage = () => {
   const itemsPerPage = 4;
   const [localCartItems, setLocalCartItems] = useState(cartItems || []);
 
+  // Эффект для загрузки товаров в корзине, мемоизируем зависимости
   useEffect(() => {
-    // Telegram userId или тестовое значение
     if (userId && cartItems.length === 0) {
       dispatch(fetchCartItems(userId))
         .unwrap()
-        .then((response) => {
-          setLocalCartItems(response || []);
-        })
+        .then((response) => setLocalCartItems(response || []))
         .catch((error) => {
           console.error('Ошибка загрузки корзины: ', error);
           setLocalCartItems([]);
@@ -63,10 +40,10 @@ const CartPage = () => {
     }
   }, [dispatch, cartItems.length, userId]);
 
+  // Мемоизация функции удаления товара
   const handleRemove = useCallback(
     (jewelryId) => {
       setIsRemoving(true);
-
       const updatedItems = localCartItems.map((item) =>
         item.jewelryId === jewelryId ? { ...item, isRemoving: true } : item,
       );
@@ -74,35 +51,39 @@ const CartPage = () => {
 
       setTimeout(() => {
         setLocalCartItems((prevItems) => prevItems.filter((item) => item.jewelryId !== jewelryId));
-
-        dispatch(removeFromCart({ jewelryId, telegramUserId: userId })).finally(() => {
-          setIsRemoving(false);
-        });
+        dispatch(removeFromCart({ jewelryId, telegramUserId: userId })).finally(() =>
+          setIsRemoving(false),
+        );
       }, 500);
     },
-    [localCartItems, dispatch],
+    [localCartItems, dispatch, userId],
   );
 
-  const totalPages = Math.ceil((localCartItems?.length || 0) / itemsPerPage);
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-
+  // Пагинация: мемоизируем вычисление текущих страниц
+  const totalPages = useMemo(
+    () => Math.ceil((localCartItems?.length || 0) / itemsPerPage),
+    [localCartItems.length],
+  );
   const currentCartItems = useMemo(() => {
-    return localCartItems?.slice(indexOfFirstItem, indexOfLastItem) || [];
-  }, [localCartItems, indexOfFirstItem, indexOfLastItem]);
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    return localCartItems.slice(indexOfFirstItem, indexOfLastItem) || [];
+  }, [localCartItems, currentPage, itemsPerPage]);
 
+  // Мемоизация функции смены страницы
   const handlePageChange = useCallback((event, value) => {
     setCurrentPage(value);
     window.scrollTo(0, 0);
   }, []);
 
-  const isLoading = fetchStatus === 'loading' || cartStatus === 'loading' || isRemoving;
+  const isLoading = useMemo(
+    () => fetchStatus === 'loading' || cartStatus === 'loading' || isRemoving,
+    [fetchStatus, cartStatus, isRemoving],
+  );
 
   if (isLoading) {
     return (
-      <Box
-        sx={{ minHeight: '600px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
-      >
+      <Box sx={cartPageStyles.loadingBox}>
         <CircularProgress size={80} />
       </Box>
     );
@@ -110,9 +91,7 @@ const CartPage = () => {
 
   if (fetchError || cartError) {
     return (
-      <Box
-        sx={{ minHeight: '600px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}
-      >
+      <Box sx={cartPageStyles.errorBox}>
         <Typography color="white">Ошибка: {fetchError || cartError}</Typography>
       </Box>
     );
@@ -120,8 +99,8 @@ const CartPage = () => {
 
   if (!currentCartItems.length) {
     return (
-      <Box sx={{ minHeight: '606px' }}>
-        <Typography align="center" variant="h6" sx={{ marginTop: 4 }}>
+      <Box sx={cartPageStyles.emptyCartBox}>
+        <Typography align="center" variant="h6" sx={cartPageStyles.emptyCartText}>
           Ваша корзина пуста
         </Typography>
       </Box>
@@ -129,8 +108,8 @@ const CartPage = () => {
   }
 
   return (
-    <Box sx={{ minHeight: '808px', padding: 2 }}>
-      <Typography variant="h4" align="center" gutterBottom>
+    <Box sx={cartPageStyles.cartContainer}>
+      <Typography variant="h4" align="center" gutterBottom sx={cartPageStyles.cartTitle}>
         Ваша Корзина
       </Typography>
       <TransitionGroup component={Grid} container spacing={1}>
@@ -157,7 +136,7 @@ const CartPage = () => {
           </CSSTransition>
         ))}
       </TransitionGroup>
-      <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
+      <Box sx={cartPageStyles.paginationBox}>
         <Pagination
           count={totalPages}
           page={currentPage}
@@ -165,7 +144,7 @@ const CartPage = () => {
           color="primary"
         />
       </Box>
-      <PaymentButton /> {/* Добавляем компонент оплаты */}
+      <PaymentButton />
     </Box>
   );
 };
