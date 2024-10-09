@@ -3,12 +3,13 @@ const styles = {
     padding: '20px',
     backgroundColor: '#1C1C1C',
     color: '#FFFFFF',
+    minHeight: '500px',
   },
   imageContainer: {
     textAlign: 'center',
   },
   image: {
-    maxHeight: '300px',
+    maxHeight: '280px',
     objectFit: 'cover',
     margin: '0 auto',
   },
