@@ -83,20 +83,7 @@ const JewelryDetailsPage = () => {
 
   return (
     <Box sx={styles.container}>
-      <IconButton
-        sx={{
-          position: 'absolute',
-          zIndex: 3,
-          top: '80px',
-          left: '0px',
-          color: 'white',
-          borderRadius: 1.5,
-          height: '60px',
-          width: '60px',
-          scale: 1.5,
-        }}
-        onClick={handleBackButton}
-      >
+      <IconButton sx={styles.backButton} onClick={handleBackButton}>
         <ArrowBackIcon></ArrowBackIcon>
       </IconButton>
       {jewelry.images.length > 0 && (

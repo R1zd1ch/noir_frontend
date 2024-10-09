@@ -53,6 +53,17 @@ const styles = {
       backgroundColor: 'rgba(255, 255, 255, 1)',
     },
   },
+  backButton: {
+    position: 'absolute',
+    zIndex: 3,
+    top: '90px',
+    left: '0px',
+    color: 'white',
+    borderRadius: 1.5,
+    height: '50px',
+    width: '50px',
+    scale: 1.5,
+  },
 };
 
 export default styles;
