@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useWebApp } from '@vkruglikov/react-telegram-web-app';
 import { fetchUser } from '../slices/userSlice.js';
 import welcomePageStyles from './styles/WelcomePageStyles'; // Импортируем стили
+import backgroundImage from '../assets/welcomePageIphone.png';
 
 const WelcomePage = () => {
   const dispatch = useDispatch();
@@ -36,19 +37,17 @@ const WelcomePage = () => {
   return (
     <Box sx={welcomePageStyles.pageContainer}>
       <Box sx={welcomePageStyles.contentContainer}>
-        <Typography sx={welcomePageStyles.welcomeText}>
-          Привет, {user?.firstName}!!! {/* Берём из хранилища или по умолчанию */}
-        </Typography>
-      </Box>
-      <Box sx={welcomePageStyles.infoContainer}>
         <Typography variant="h2" gutterBottom>
-          Добро пожаловать в Noir Jewelry!
+          Добро пожаловать в
+        </Typography>
+        <Typography variant="h2" gutterBottom>
+          Noir Jewelry!
         </Typography>
 
-        <Typography variant="h5" align="center" gutterBottom>
+        {/* <Typography variant="h5" align="center" gutterBottom>
           Мы создаём уникальные украшения, которые подчёркивают вашу индивидуальность.
           Присоединяйтесь к нашему сообществу во ВКонтакте, чтобы быть в курсе новинок!
-        </Typography>
+        </Typography> */}
 
         <Button
           variant="contained"

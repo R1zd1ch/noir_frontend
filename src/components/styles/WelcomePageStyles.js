@@ -1,3 +1,5 @@
+import backgroundImage from '../../assets/welcomePageIphone.png';
+
 const welcomePageStyles = {
   loaderContainer: {
     minHeight: '600px',
