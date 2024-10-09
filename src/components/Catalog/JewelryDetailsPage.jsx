@@ -11,6 +11,7 @@ import { useWebApp } from '@vkruglikov/react-telegram-web-app';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import styles from './styles/JewelryDetailsPageStyles'; // Импорт стилей
+import ImageModal from './ImageModal'; // Импорт нового компонента ImageModal
 
 const JewelryDetailsPage = () => {
   const tg = useWebApp();
@@ -20,6 +21,8 @@ const JewelryDetailsPage = () => {
   const navigate = useNavigate();
   const [isAddToCartDisabled, setIsAddToCartDisabled] = useState(false);
   const [isRemoveFromCartDisabled, setIsRemoveFromCartDisabled] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false); // Состояние для управления модальным окном
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0); // Для отслеживания выбранного изображения
 
   const jewelry = useSelector((state) =>
     state.jewelry.items.find((item) => item.id === Number(id)),
@@ -58,6 +61,15 @@ const JewelryDetailsPage = () => {
       .finally(() => setIsRemoveFromCartDisabled(false));
   }, [dispatch, jewelry?.id, telegramUserId]);
 
+  const openImageModal = (index) => {
+    setSelectedImageIndex(index);
+    setIsModalOpen(true);
+  };
+
+  const closeImageModal = () => {
+    setIsModalOpen(false);
+  };
+
   if (isLoading) {
     return <CircularProgress color="secondary" />;
   }
@@ -89,7 +101,7 @@ const JewelryDetailsPage = () => {
       {jewelry.images.length > 0 && (
         <Slider {...sliderSettings}>
           {jewelry.images.map((image, index) => (
-            <Box key={index} sx={styles.imageContainer}>
+            <Box key={index} sx={styles.imageContainer} onClick={() => openImageModal(index)}>
               <img src={image.url} alt={jewelry.title} style={styles.image} />
             </Box>
           ))}
@@ -134,6 +146,14 @@ const JewelryDetailsPage = () => {
           </Button>
         )}
       </Box>
+
+      {/* Модальное окно для увеличенных изображений */}
+      <ImageModal
+        open={isModalOpen}
+        images={jewelry.images}
+        onClose={closeImageModal}
+        initialSlide={selectedImageIndex}
+      />
     </Box>
   );
 };
