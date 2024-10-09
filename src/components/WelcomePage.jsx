@@ -1,15 +1,10 @@
 import React, { useEffect, useMemo } from 'react';
-import { Box, Typography, Button, CircularProgress } from '@mui/material';
+import { Box, Typography, Button, CircularProgress, Container } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { useWebApp } from '@vkruglikov/react-telegram-web-app';
-import { fetchUser } from '../slices/userSlice.js';
 import welcomePageStyles from './styles/WelcomePageStyles'; // Импортируем стили
 import backgroundImage from '../assets/welcomePageIphone.png';
-
 const WelcomePage = () => {
-  const dispatch = useDispatch();
-  const tg = useWebApp();
-
   // Данные пользователя из хранилища
   const { loading, error, user } = useSelector((state) => state.user);
 
@@ -37,29 +32,22 @@ const WelcomePage = () => {
   return (
     <Box sx={welcomePageStyles.pageContainer}>
       <Box sx={welcomePageStyles.contentContainer}>
-        <Typography variant="h2" gutterBottom>
-          Добро пожаловать в
-        </Typography>
-        <Typography variant="h2" gutterBottom>
-          Noir Jewelry!
-        </Typography>
-
-        {/* <Typography variant="h5" align="center" gutterBottom>
-          Мы создаём уникальные украшения, которые подчёркивают вашу индивидуальность.
-          Присоединяйтесь к нашему сообществу во ВКонтакте, чтобы быть в курсе новинок!
-        </Typography> */}
-
-        <Button
-          variant="contained"
-          color="primary"
-          size="large"
-          sx={welcomePageStyles.joinButton}
-          href="https://vk.com/noir_jewelry"
-          target="_blank"
-          rel="noopener"
-        >
-          Перейти в группу ВКонтакте
-        </Button>
+        <Container sx={welcomePageStyles.mainContent}>
+          <Typography variant="h2" gutterBottom sx={welcomePageStyles.textStyle}>
+            Добро пожаловать!
+          </Typography>
+          <Button
+            variant="contained"
+            color="primary"
+            size="large"
+            sx={welcomePageStyles.joinButton}
+            href="https://vk.com/noir_jewelry"
+            target="_blank"
+            rel="noopener"
+          >
+            Перейти в группу ВКонтакте
+          </Button>
+        </Container>
       </Box>
     </Box>
   );
