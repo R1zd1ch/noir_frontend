@@ -6,6 +6,7 @@ import { addToCart, removeFromCart, fetchCartItems } from '../../slices/cartSlic
 import { createSelector } from 'reselect';
 import { useWebApp } from '@vkruglikov/react-telegram-web-app';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import jewelryCardStyles from './styles/JewelryCardStyles'; // Импортируем стили
 
 // Селекторы для оптимизации выборки данных
@@ -70,60 +71,75 @@ const JewelryCard = React.memo(({ jewelry }) => {
       });
   }, [dispatch, jewelry.id, telegramUserId]);
 
+  // Добавим анимацию для плавного появления компонента
+  const fadeIn = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+    exit: { opacity: 0, y: -20, transition: { duration: 0.5 } },
+  };
+
   return (
-    <Card sx={jewelryCardStyles.card}>
-      <Box onClick={handleOpenDetails}>
-        {jewelry.images.length > 0 && (
-          <CardMedia
-            component="img"
-            height="200"
-            image={jewelry.images[0].url}
-            alt={jewelry.title}
-            sx={jewelryCardStyles.media}
-          />
-        )}
-        <CardContent sx={jewelryCardStyles.content}>
-          <Typography variant="h5" component="div" sx={jewelryCardStyles.title}>
-            {jewelry.title}
-          </Typography>
-          <Box sx={jewelryCardStyles.descriptionBox}>
-            <Typography variant="body2">{jewelry.description}</Typography>
-          </Box>
-          <Typography variant="h6" color="primary">
-            ${jewelry.price.toFixed(2)}
-          </Typography>
-          {jewelry.quantity <= 0 && (
-            <Typography variant="body2" color="error">
-              Продано
-            </Typography>
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+      variants={fadeIn}
+      style={{ marginBottom: '20px' }}
+    >
+      <Card sx={jewelryCardStyles.card}>
+        <Box onClick={handleOpenDetails}>
+          {jewelry.images.length > 0 && (
+            <CardMedia
+              component="img"
+              height="200"
+              image={jewelry.images[0].url}
+              alt={jewelry.title}
+              sx={jewelryCardStyles.media}
+            />
           )}
-        </CardContent>
-      </Box>
+          <CardContent sx={jewelryCardStyles.content}>
+            <Typography variant="h5" component="div" sx={jewelryCardStyles.title}>
+              {jewelry.title}
+            </Typography>
+            <Box sx={jewelryCardStyles.descriptionBox}>
+              <Typography variant="body2">{jewelry.description}</Typography>
+            </Box>
+            <Typography variant="h6" color="primary">
+              ${jewelry.price.toFixed(2)}
+            </Typography>
+            {jewelry.quantity <= 0 && (
+              <Typography variant="body2" color="error">
+                Продано
+              </Typography>
+            )}
+          </CardContent>
+        </Box>
 
-      <Box sx={jewelryCardStyles.actions}>
-        <IconButton
-          aria-label="remove from cart"
-          onClick={handleRemoveFromCart}
-          onTouchStart={() => setIsRemoveHovered(true)}
-          onTouchEnd={() => setIsRemoveHovered(false)}
-          disabled={isLoading || !isInCart || jewelry.quantity <= 0 || isRemoveButtonDisabled}
-          sx={jewelryCardStyles.removeButton(isRemoveHovered)}
-        >
-          <RemoveIcon />
-        </IconButton>
+        <Box sx={jewelryCardStyles.actions}>
+          <IconButton
+            aria-label="remove from cart"
+            onClick={handleRemoveFromCart}
+            onTouchStart={() => setIsRemoveHovered(true)}
+            onTouchEnd={() => setIsRemoveHovered(false)}
+            disabled={isLoading || !isInCart || jewelry.quantity <= 0 || isRemoveButtonDisabled}
+            sx={jewelryCardStyles.removeButton(isRemoveHovered)}
+          >
+            <RemoveIcon />
+          </IconButton>
 
-        <IconButton
-          aria-label="add to cart"
-          onClick={handleAddToCart}
-          onTouchStart={() => setIsAddHovered(true)}
-          onTouchEnd={() => setIsAddHovered(false)}
-          disabled={isLoading || isInCart || jewelry.quantity <= 0 || isAddButtonDisabled}
-          sx={jewelryCardStyles.addButton(isAddHovered)}
-        >
-          <AddIcon />
-        </IconButton>
-      </Box>
-    </Card>
+          <IconButton
+            aria-label="add to cart"
+            onClick={handleAddToCart}
+            onTouchStart={() => setIsAddHovered(true)}
+            onTouchEnd={() => setIsAddHovered(false)}
+            disabled={isLoading || isInCart || jewelry.quantity <= 0 || isAddButtonDisabled}
+            sx={jewelryCardStyles.addButton(isAddHovered)}
+          >
+            <AddIcon />
+          </IconButton>
+        </Box>
+      </Card>
+    </motion.div>
   );
 });
 

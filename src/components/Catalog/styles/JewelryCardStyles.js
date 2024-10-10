@@ -1,3 +1,5 @@
+import { display, padding } from '@mui/system';
+
 // jewelryCardStyles.js
 const jewelryCardStyles = {
   card: {

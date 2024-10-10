@@ -2,11 +2,35 @@ import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { Typography, Grid, Box, CircularProgress, Pagination } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchCartItems, removeFromCart } from '../../slices/cartSlice';
-import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import { motion } from 'framer-motion';
 import PaymentButton from '../Buttons/PaymentButton';
 import CartJewelry from './CartJewelry';
 import { useWebApp } from '@vkruglikov/react-telegram-web-app';
 import cartPageStyles, { fadeIn, fadeOut } from './styles/CartPageStyles';
+
+const Loading = () => {
+  return (
+    <Box sx={cartPageStyles.loadingBox}>
+      <CircularProgress size={80} />
+    </Box>
+  );
+};
+
+const RenderCards = ({ handleRemove, fadeIn, currentCartItems }) => {
+  return (
+    <Box sx={{ minHeight: '808px' }}>
+      <Grid container spacing={1}>
+        {currentCartItems.map((item) => (
+          <Grid item xs={6} sm={3} md={3} lg={3}>
+            <motion.div initial="hidden" animate="visible" variants={fadeIn}>
+              {item.jewelry && <CartJewelry item={item} onRemove={handleRemove} />}
+            </motion.div>
+          </Grid>
+        ))}
+      </Grid>
+    </Box>
+  );
+};
 
 const CartPage = () => {
   const tg = useWebApp();
@@ -86,14 +110,6 @@ const CartPage = () => {
     return localCartItems.reduce((sum, item) => sum + item.jewelry.price, 0);
   }, [localCartItems]);
 
-  if (isLoading) {
-    return (
-      <Box sx={cartPageStyles.loadingBox}>
-        <CircularProgress size={80} />
-      </Box>
-    );
-  }
-
   if (fetchError || cartError) {
     return (
       <Box sx={cartPageStyles.errorBox}>
@@ -106,11 +122,16 @@ const CartPage = () => {
     return (
       <Box sx={cartPageStyles.emptyCartBox}>
         <Typography align="center" variant="h6" sx={cartPageStyles.emptyCartText}>
-          Ваша корзина пуста
+          Ваша корзина пуста 😞
         </Typography>
       </Box>
     );
   }
+
+  const fadeIn = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+  };
 
   return (
     <>
@@ -118,32 +139,15 @@ const CartPage = () => {
         <Typography variant="h4" align="center" gutterBottom sx={cartPageStyles.cartTitle}>
           Ваша Корзина
         </Typography>
-        <Box sx={{ minHeight: '808px' }}>
-          <TransitionGroup component={Grid} container spacing={1}>
-            {currentCartItems.map((item) => (
-              <CSSTransition
-                key={item.jewelryId}
-                timeout={500}
-                classNames={{
-                  enter: 'fade-enter',
-                  enterActive: 'fade-enter-active',
-                  exit: 'fade-exit',
-                  exitActive: 'fade-exit-active',
-                }}
-                onEnter={(node) => {
-                  node.style.animation = `${fadeIn} 500ms forwards`;
-                }}
-                onExit={(node) => {
-                  node.style.animation = `${fadeOut} 500ms forwards`;
-                }}
-              >
-                <Grid item xs={6} sm={3} md={3} lg={3}>
-                  {item.jewelry && <CartJewelry item={item} onRemove={handleRemove} />}
-                </Grid>
-              </CSSTransition>
-            ))}
-          </TransitionGroup>
-        </Box>
+        {isLoading ? (
+          <Loading />
+        ) : (
+          <RenderCards
+            handleRemove={handleRemove}
+            fadeIn={fadeIn}
+            currentCartItems={currentCartItems}
+          />
+        )}
         <Box sx={cartPageStyles.paginationBox}>
           <Pagination
             count={totalPages}
@@ -152,19 +156,8 @@ const CartPage = () => {
             color="primary"
           />
         </Box>
-        {/* Передаём сумму заказа в PaymentButton */}
         <PaymentButton totalAmount={totalAmount} />
       </Box>
-      {/* <Box sx={cartPageStyles.paginationBox}>
-        <Pagination
-          count={totalPages}
-          page={currentPage}
-          onChange={handlePageChange}
-          color="primary"
-        />
-      </Box> */}
-      {/* Передаём сумму заказа в PaymentButton */}
-      {/* <PaymentButton totalAmount={totalAmount} /> */}
     </>
   );
 };

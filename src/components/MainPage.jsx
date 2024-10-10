@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useCallback, lazy, Suspense } from 'react';
 import { Typography, Box, Button, Container } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -12,8 +12,21 @@ import {
   containerStyles,
 } from './styles/MainPageStyles'; // Импорт стилей
 
+// Lazy loading FAQModal
+const FAQModal = lazy(() => import('./FAQModal'));
+
 const MainPage = () => {
   const navigate = useNavigate();
+  const [openFAQ, setOpenFAQ] = useState(false);
+
+  // Мемоизация функций открытия и закрытия модального окна
+  const handleOpenFAQ = useCallback(() => {
+    setOpenFAQ(true);
+  }, []);
+
+  const handleCloseFAQ = useCallback(() => {
+    setOpenFAQ(false);
+  }, []);
 
   return (
     <Container maxWidth="lg" minHeight="800px" sx={{ ...containerStyles }}>
@@ -74,16 +87,16 @@ const MainPage = () => {
           <Typography variant="body1" sx={{ maxWidth: '800px', mx: 'auto', mb: 4, ...robotoFont }}>
             свет и тьма в одном обличье - парадокс бытия, в котором мы пребываем...
           </Typography>
-          <Button
-            variant="contained"
-            size="large"
-            sx={buttonStyles}
-            onClick={() => alert('Узнать больше')}
-          >
-            Узнать больше
+          <Button variant="contained" size="large" sx={buttonStyles} onClick={handleOpenFAQ}>
+            Часто задаваемые вопросы
           </Button>
         </motion.div>
       </Box>
+
+      {/* FAQ Modal */}
+      <Suspense fallback={<div>Loading...</div>}>
+        <FAQModal open={openFAQ} onClose={handleCloseFAQ} />
+      </Suspense>
 
       {/* Call to Action Section */}
       <Box
