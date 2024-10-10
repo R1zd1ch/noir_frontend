@@ -160,7 +160,7 @@ const CatalogPage = () => {
           <Typography sx={catalogPageStyles.itemsTitle} variant="h2" align="center">
             Наши украшения:
           </Typography>
-          <Box sx={{ display: 'flex' }}>
+          <Box sx={{ display: 'flex', marginBottom: '5px' }}>
             <FormControl sx={catalogPageStyles.selectBox}>
               <InputLabel id="select-type-label" shrink>
                 Тип товара
