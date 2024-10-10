@@ -118,30 +118,32 @@ const CartPage = () => {
         <Typography variant="h4" align="center" gutterBottom sx={cartPageStyles.cartTitle}>
           Ваша Корзина
         </Typography>
-        <TransitionGroup component={Grid} container spacing={1}>
-          {currentCartItems.map((item) => (
-            <CSSTransition
-              key={item.jewelryId}
-              timeout={500}
-              classNames={{
-                enter: 'fade-enter',
-                enterActive: 'fade-enter-active',
-                exit: 'fade-exit',
-                exitActive: 'fade-exit-active',
-              }}
-              onEnter={(node) => {
-                node.style.animation = `${fadeIn} 500ms forwards`;
-              }}
-              onExit={(node) => {
-                node.style.animation = `${fadeOut} 500ms forwards`;
-              }}
-            >
-              <Grid item xs={6} sm={3} md={3} lg={3}>
-                {item.jewelry && <CartJewelry item={item} onRemove={handleRemove} />}
-              </Grid>
-            </CSSTransition>
-          ))}
-        </TransitionGroup>
+        <Box sx={{ minHeight: '808px' }}>
+          <TransitionGroup component={Grid} container spacing={1}>
+            {currentCartItems.map((item) => (
+              <CSSTransition
+                key={item.jewelryId}
+                timeout={500}
+                classNames={{
+                  enter: 'fade-enter',
+                  enterActive: 'fade-enter-active',
+                  exit: 'fade-exit',
+                  exitActive: 'fade-exit-active',
+                }}
+                onEnter={(node) => {
+                  node.style.animation = `${fadeIn} 500ms forwards`;
+                }}
+                onExit={(node) => {
+                  node.style.animation = `${fadeOut} 500ms forwards`;
+                }}
+              >
+                <Grid item xs={6} sm={3} md={3} lg={3}>
+                  {item.jewelry && <CartJewelry item={item} onRemove={handleRemove} />}
+                </Grid>
+              </CSSTransition>
+            ))}
+          </TransitionGroup>
+        </Box>
         <Box sx={cartPageStyles.paginationBox}>
           <Pagination
             count={totalPages}

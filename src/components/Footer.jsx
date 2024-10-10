@@ -1,6 +1,8 @@
 import React from 'react';
-import { AppBar, Toolbar, Typography, Container, Box } from '@mui/material';
+import { AppBar, Toolbar, Typography, Container, Box, IconButton } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
+import TelegramIcon from '@mui/icons-material/Telegram';
+import { Icon32LogoVk } from '@vkontakte/icons';
 
 const Footer = () => {
   const theme = useTheme(); // Доступ к теме
@@ -11,7 +13,7 @@ const Footer = () => {
       sx={{
         top: 'auto',
         bottom: 0,
-        height: { xs: '80px', md: '100px' }, // Адаптивная высота
+        height: { xs: '100px', md: '120px' }, // Адаптивная высота
         width: '100%',
         backgroundColor: theme.palette.backgroundAppBar.default,
         color: theme.palette.text.primary,
@@ -22,23 +24,55 @@ const Footer = () => {
       <Container
         sx={{
           display: 'flex',
+          flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
         }}
       >
-        <Toolbar>
+        <Toolbar
+          sx={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+        >
+          {/* Текст с авторскими правами */}
+          <Typography variant="body1" sx={{ fontSize: '15px', textAlign: 'center' }}>
+            © 2024 Noir Jewelry Store. Все права защищены.
+          </Typography>
+
+          {/* Контейнер для текста "Свяжитесь с нами" и иконок */}
           <Box
             sx={{
-              textAlign: 'center',
-              fontFamily: 'Cinzel, serif', // Шрифт для текста
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              mt: -1, // Отступ сверху
             }}
           >
-            <Typography variant="body1" sx={{ fontSize: { xs: '14px', md: '16px' } }}>
-              © 2024 Noir Jewelry Store. Все права защищены.
+            <Typography variant="body2" sx={{ fontSize: '17px', textAlign: 'center' }}>
+              Свяжитесь с нами:
             </Typography>
-            <Typography variant="body2" sx={{ fontSize: { xs: '12px', md: '14px' }, mt: 0.5 }}>
-              Свяжитесь с нами: info@noirstore.com
-            </Typography>
+
+            {/* Иконки социальных сетей */}
+            <IconButton
+              component="a"
+              href="https://vk.com/noir_jewelry"
+              target="_blank"
+              rel="noopener noreferrer"
+              fill="red"
+              sx={{ color: theme.palette.text.primary, ml: 0 }} // Отступ между текстом и иконками
+              aria-label="VK"
+            >
+              <Icon32LogoVk width={30} height={30} />
+            </IconButton>
+
+            <IconButton
+              component="a"
+              href="https://t.me/noir_jewelry"
+              target="_blank"
+              rel="noopener noreferrer"
+              sx={{ color: theme.palette.text.primary, ml: -1.5 }}
+              aria-label="Telegram"
+            >
+              <TelegramIcon sx={{ fontSize: 30, color: 'white' }} />
+            </IconButton>
           </Box>
         </Toolbar>
       </Container>

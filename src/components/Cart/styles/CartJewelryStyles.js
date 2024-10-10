@@ -4,6 +4,7 @@ const cartJewelryStyles = {
     backgroundColor: '#212121',
     color: '#FFFFFF',
     position: 'relative',
+    borderRadius: '15px',
   },
   media: {
     objectFit: 'cover',

@@ -1,5 +1,7 @@
 // catalogPageStyles.js
+import zIndex from '@mui/material/styles/zIndex';
 import backgroundImage from '../../../assets/catalogFon.jpg';
+import { borderRadius, height } from '@mui/system';
 
 const catalogPageStyles = {
   loadingBox: {
@@ -86,6 +88,22 @@ const catalogPageStyles = {
     marginTop: 2,
     position: 'relative',
     zIndex: 3,
+  },
+  selectBox: {
+    display: 'flex',
+    justifyContent: 'center',
+    width: '125px',
+    height: '50px',
+    zIndex: 300,
+  },
+  menuProps: {
+    PaperProps: {
+      sx: {
+        bgcolor: 'black', // Цвет фона выпадающего меню
+        color: 'white', // Цвет текста элементов меню
+        borderRadius: '0 0 20px 20px',
+      },
+    },
   },
 };
 

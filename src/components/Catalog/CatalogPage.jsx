@@ -1,6 +1,17 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Grid, CircularProgress, Typography, Box, Pagination, Button } from '@mui/material';
+import {
+  Grid,
+  CircularProgress,
+  Typography,
+  Box,
+  Pagination,
+  Button,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+} from '@mui/material';
 import { fetchJewelryItems, resetStatus } from '../../slices/JewelrySlice';
 import JewelryCard from './JewelryCard';
 import catalogPageStyles from './styles/CatalogPageStyles';
@@ -10,19 +21,53 @@ const CatalogPage = () => {
   const { items: jewelryItems, status, error } = useSelector((state) => state.jewelry);
 
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedType, setSelectedType] = useState('all');
+  const [priceOrder, setPriceOrder] = useState('none'); // Добавляем состояние "none"
   const itemsPerPage = 4;
 
-  // Мемоизация фильтрованных и отсортированных товаров
-  const sortedJewelryItems = useMemo(() => {
+  const jewelryTypes = useMemo(() => {
     if (!Array.isArray(jewelryItems)) return [];
-    const availableJewelryItems = jewelryItems.filter((item) => item.quantity > 0);
-    const unavailableJewelryItems = jewelryItems.filter(
-      (item) => item.quantity === 0 || item.quantity == null,
-    );
-    return [...availableJewelryItems, ...unavailableJewelryItems];
+
+    const types = jewelryItems
+      .map((item) => item.type)
+      .filter((type, index, self) => type && self.indexOf(type) === index);
+    return ['all', ...types];
   }, [jewelryItems]);
 
-  // Пагинация: индексы для текущей страницы
+  const handleTypeChange = useCallback((event) => {
+    setSelectedType(event.target.value);
+    setCurrentPage(1);
+  }, []);
+
+  const handlePriceOrderChange = useCallback((event) => {
+    setPriceOrder(event.target.value);
+    setCurrentPage(1);
+  }, []);
+
+  const sortedJewelryItems = useMemo(() => {
+    if (!Array.isArray(jewelryItems)) return [];
+
+    const filteredItems =
+      selectedType === 'all'
+        ? jewelryItems
+        : jewelryItems.filter((item) => item.type === selectedType);
+
+    // Логика сортировки: если выбрано "none", оставляем исходный порядок
+    const sortedItems =
+      priceOrder === 'none'
+        ? filteredItems
+        : [...filteredItems].sort((a, b) =>
+            priceOrder === 'asc' ? a.price - b.price : b.price - a.price,
+          );
+
+    const availableJewelryItems = sortedItems.filter((item) => item.quantity > 0);
+    const unavailableJewelryItems = sortedItems.filter(
+      (item) => item.quantity === 0 || item.quantity == null,
+    );
+
+    return [...availableJewelryItems, ...unavailableJewelryItems];
+  }, [jewelryItems, selectedType, priceOrder]);
+
   const totalPages = useMemo(
     () => Math.ceil(sortedJewelryItems.length / itemsPerPage),
     [sortedJewelryItems.length],
@@ -33,20 +78,17 @@ const CatalogPage = () => {
     return sortedJewelryItems.slice(indexOfFirstItem, indexOfLastItem);
   }, [currentPage, sortedJewelryItems, itemsPerPage]);
 
-  // Загрузка данных при монтировании
   useEffect(() => {
     dispatch(resetStatus());
     dispatch(fetchJewelryItems());
   }, [dispatch]);
 
-  // Сброс ошибки при успешной загрузке
   useEffect(() => {
     if (status === 'succeeded') {
       dispatch(resetStatus());
     }
   }, [status, dispatch]);
 
-  // Обработчик смены страницы с мемоизацией
   const handlePageChange = useCallback((event, value) => {
     setCurrentPage(value);
     window.scrollTo(0, 0);
@@ -64,22 +106,6 @@ const CatalogPage = () => {
     return (
       <Box sx={catalogPageStyles.errorBox}>
         <Typography sx={catalogPageStyles.complainText}>Ошибка: {error}</Typography>
-        <Typography sx={catalogPageStyles.complainText}>
-          Чтобы сообщить об ошибке и поныть
-        </Typography>
-        <Typography sx={catalogPageStyles.complainText} align="center">
-          Нажмите на&nbsp;
-          <Button
-            variant="contained"
-            color="primary"
-            href="https://t.me/r1zzd"
-            target="_blank"
-            rel="noopener noreferrer"
-            sx={catalogPageStyles.complainButton}
-          >
-            Пожаловаться
-          </Button>
-        </Typography>
         <Button
           variant="contained"
           color="secondary"
@@ -108,6 +134,45 @@ const CatalogPage = () => {
         <Typography sx={catalogPageStyles.itemsTitle} variant="h2" align="center">
           Наши украшения:
         </Typography>
+        <Box sx={{ display: 'flex' }}>
+          <FormControl sx={catalogPageStyles.selectBox}>
+            <InputLabel id="select-type-label" shrink>
+              Тип товара
+            </InputLabel>
+            <Select
+              labelId="select-type-label"
+              value={selectedType}
+              onChange={handleTypeChange}
+              label="Тип товара"
+              sx={{ backgroundColor: 'black', color: 'white' }}
+              MenuProps={catalogPageStyles.menuProps}
+            >
+              {jewelryTypes.map((type) => (
+                <MenuItem key={type} value={type}>
+                  {type === 'all' ? 'Все' : type}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <FormControl sx={{ ...catalogPageStyles.selectBox, ml: 2 }}>
+            <InputLabel id="price-order-label" shrink>
+              Сортировка по цене
+            </InputLabel>
+            <Select
+              labelId="price-order-label"
+              value={priceOrder}
+              onChange={handlePriceOrderChange}
+              label="Сортировка по цене"
+              sx={{ backgroundColor: 'black', color: 'white' }}
+              MenuProps={catalogPageStyles.menuProps}
+            >
+              <MenuItem value="none">Без сортировки</MenuItem>
+              <MenuItem value="asc">По возрастанию</MenuItem>
+              <MenuItem value="desc">По убыванию</MenuItem>
+            </Select>
+          </FormControl>
+        </Box>
         <Grid container spacing={1}>
           {currentJewelryItems.map((jewelry) => (
             <Grid item key={jewelry.id} xs={6} sm={3} md={3} lg={3}>
@@ -116,6 +181,7 @@ const CatalogPage = () => {
           ))}
         </Grid>
       </Box>
+
       <Box sx={catalogPageStyles.paginationBox}>
         <Pagination
           count={totalPages}

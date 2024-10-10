@@ -1,9 +1,7 @@
-import React, { useEffect, useMemo } from 'react';
+import React from 'react';
 import { Box, Typography, Button, CircularProgress, Container } from '@mui/material';
-import { useDispatch, useSelector } from 'react-redux';
-import { useWebApp } from '@vkruglikov/react-telegram-web-app';
+import { useSelector } from 'react-redux';
 import welcomePageStyles from './styles/WelcomePageStyles'; // Импортируем стили
-import backgroundImage from '../assets/welcomePageIphone.png';
 const WelcomePage = () => {
   // Данные пользователя из хранилища
   const { loading, error, user } = useSelector((state) => state.user);
